@@ -1,0 +1,51 @@
+h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #dddddd;
+}
+h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+pre {
+  overflow-x: auto;
+  border-radius: 8px;
+  z-index: 0;
+  margin: 3vmin 0;
+}
+
+code {
+  font-size: 0.8rem;
+}
+
+.container {
+  width: 60%;
+  color: #dddddd;
+}
+
+.article-canvas {
+  width: 100%;
+  aspect-ratio: 4/3;
+  /*border-radius: 8px;*/
+  /*border: 1px dotted #aaaaaa;*/
+  z-index: 1;
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 2.5rem;
+}
+
+@media (max-width: 650px) {
+  .container {
+    width: 90%;
+  }
+  .article-canvas {
+    width: 100%;
+  }
+}
