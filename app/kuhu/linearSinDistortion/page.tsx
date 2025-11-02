@@ -3,7 +3,7 @@
 import "highlight.js/styles/atom-one-dark.css";
 import "@/app/styles/article.css";
 import { memo } from "./memo";
-import { Article } from "../comps/Article";
+import { Article } from "../../comps/Article";
 import LinearSinDistortion from "./Linear";
 
 export default function Page() {

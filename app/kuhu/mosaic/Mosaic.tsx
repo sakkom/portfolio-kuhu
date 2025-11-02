@@ -3,14 +3,21 @@ import { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { EffectComposer, ShaderPass } from "three/examples/jsm/Addons.js";
 import { RenderPass } from "three/examples/jsm/Addons.js";
-import { frostedShader } from "./shader";
+import { mosaicShader } from "./shader";
 import "@/app/styles/article.css";
-import { setGui } from "../utils/utils";
+import { setGui } from "../../utils/utils";
+// import { FilmPass } from "three/examples/jsm/Addons.js";
+// import { GlitchPass } from "three/examples/jsm/Addons.js";
+// import { BloomPass } from "three/examples/jsm/Addons.js";
+// import { DotScreenPass } from "three/examples/jsm/Addons.js";
+// import { HalftonePass } from "three/examples/jsm/Addons.js";
+// import { UnrealBloomPass } from "three/examples/jsm/Addons.js";
+// import { OutlinePass } from "three/examples/jsm/Addons.js";
 
-export default function Frosted() {
+export default function Mosaic() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const composerRef = useRef<EffectComposer | null>(null);
-  const radiusParams = useRef<{ offset: number }>({ offset: 5.0 });
+  const mosaicParams = useRef<{ pixelSize: number }>({ pixelSize: 5.0 });
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -21,7 +28,7 @@ export default function Frosted() {
     canvas.height = clientHeight;
 
     const gui = setGui();
-    gui.add(radiusParams.current, "offset").min(0).max(100).step(1);
+    gui.add(mosaicParams.current, "pixelSize").min(1).max(50).step(1);
 
     const renderer = new THREE.WebGLRenderer({ canvas });
     const scene = new THREE.Scene();
@@ -39,12 +46,15 @@ export default function Frosted() {
     light.position.set(0, 0, 1);
     scene.add(light);
 
-    const geometry = new THREE.PlaneGeometry(700, 500);
+    const geometry = new THREE.BoxGeometry(200, 200, 200);
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("/texture-img-04.jpg");
+    const texture = loader.load("/texture-img-03.jpg");
     texture.colorSpace = THREE.SRGBColorSpace;
     const material = new THREE.MeshPhongMaterial({
       map: texture,
+      color: 0x00ff00,
+      // wireframe: true,
+      // normalMap: texture,
     });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
@@ -55,42 +65,41 @@ export default function Frosted() {
     composerRef.current = composer;
     composer.addPass(new RenderPass(scene, cam));
 
-    const frostedPass = new ShaderPass(frostedShader);
-    frostedPass.uniforms.uResolution.value = new THREE.Vector2(
+    /*examples effect */
+    // const filmPass = new FilmPass();
+    // composer.addPass(filmPass);
+
+    const mosaicPass = new ShaderPass(mosaicShader);
+    mosaicPass.uniforms.uPixelSize.value = mosaicParams.current.pixelSize;
+    mosaicPass.uniforms.uResolution.value = new THREE.Vector2(
       clientWidth,
       clientHeight,
     );
-    frostedPass.uniforms.uRadius.value = radiusParams.current.offset;
-    composer.addPass(frostedPass);
+    composer.addPass(mosaicPass);
 
+    let rot = 0;
     const animate = () => {
-      frostedPass.uniforms.uRadius.value = radiusParams.current.offset;
+      rot += 1;
+
+      mesh.rotation.x = Math.cos((rot * Math.PI) / 180);
+      mesh.rotation.y += 0.01;
+      mosaicPass.uniforms.uPixelSize.value = mosaicParams.current.pixelSize;
+      // renderer.render(scene, cam);
       composer.render();
       requestAnimationFrame(animate);
     };
 
     animate();
 
-    const mouse = new THREE.Vector2();
-    const handleMouseMove = (e: MouseEvent) => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = (e.clientX - rect.left) / rect.width;
-      mouse.y = 1 - (e.clientY - rect.top) / rect.height;
-      frostedPass.uniforms.uMouse.value.set(mouse.x, mouse.y);
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
       renderer.dispose();
     };
   }, []);
 
   return (
-    <>
+    <div>
       <div id="guiContainer"></div>
       <canvas className="article-canvas" ref={canvasRef} />
-    </>
+    </div>
   );
 }

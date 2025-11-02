@@ -5,7 +5,7 @@ import { EffectComposer, ShaderPass } from "three/examples/jsm/Addons.js";
 import { RenderPass } from "three/examples/jsm/Addons.js";
 import { linerShader } from "./shader";
 import "@/app/styles/article.css";
-import { setGui } from "../utils/utils";
+import { setGui } from "../../utils/utils";
 
 interface guiProps {
   freq: number;
