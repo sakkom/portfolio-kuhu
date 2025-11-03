@@ -47,15 +47,18 @@ function initCanvas(canvas: HTMLCanvasElement) {
   return { clientWidth, clientHeight };
 }
 
-function initGui(props: guiProps) {
-  const gui = setGui();
-  gui
-    .add(props, "freq")
-    .min(0)
-    .max(Math.PI * 4)
-    .step(1);
-  gui.add(props, "amp").min(0.0).max(0.1).step(0.01);
-  // return gui;
+function initGui(props: guiProps, isHome: boolean) {
+  if (!isHome) {
+    const gui = setGui();
+    gui
+      .add(props, "freq")
+      .min(0)
+      .max(Math.PI * 4)
+      .step(1);
+    gui.add(props, "amp").min(0.0).max(0.1).step(0.01);
+  } else {
+    return;
+  }
 }
 
 function initThreeBasics(
@@ -91,7 +94,11 @@ function initEffectPass(
   return { composer, linearPass };
 }
 
-export default function LinearSinDistortion() {
+export default function LinearSinDistortion({
+  isHome = false,
+}: {
+  isHome?: boolean;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const guiPropsRef = useRef<guiProps>({
     freq: Math.PI * 2,
@@ -101,7 +108,7 @@ export default function LinearSinDistortion() {
   useEffect(() => {
     if (!canvasRef.current) return;
     const { clientWidth, clientHeight } = initCanvas(canvasRef.current);
-    initGui(guiPropsRef.current);
+    initGui(guiPropsRef.current, isHome);
 
     const { renderer, scene, cam } = initThreeBasics(
       canvasRef.current,
@@ -140,7 +147,7 @@ export default function LinearSinDistortion() {
 
   return (
     <>
-      <div id="guiContainer"></div>
+      {!isHome && <div id="guiContainer"></div>}
       <canvas className="article-canvas" ref={canvasRef} />
     </>
   );

@@ -8,15 +8,14 @@ import { Article } from "../../comps/Article";
 export default function Page() {
   const title = "EffectComposerでピクセル化シェーダー";
   const date = "2025.10.31";
-  const github =
-    "https://github.com/sakkom/generate-poeme-like-bip39/blob/main/src/app/globals.css";
+  const link = `${process.env.NEXT_PUBLIC_GITHUB_LINK}/mosaic`;
 
   return (
     <div style={{ width: "100vw", minHeight: "100vh" }}>
       <Article
         title={title}
         date={date}
-        link={github}
+        link={link}
         canvas={<Mosaic />}
         memo={memo}
       />

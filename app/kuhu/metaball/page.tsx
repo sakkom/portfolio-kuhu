@@ -2,14 +2,14 @@
 // import Mosaic from "./Mosaic";
 import "highlight.js/styles/atom-one-dark.css";
 import "@/app/styles/article.css";
-import { memo } from "./memo";
 import { Article } from "../../comps/Article";
-import LinearSinDistortion from "./Linear";
+import Metaball from "./Metaball";
+import { memo } from "./memo";
 
 export default function Page() {
-  const title = "uv座標の正弦波ディストーションでの揺らぎ";
-  const date = "2025.11.02";
-  const link = `${process.env.NEXT_PUBLIC_GITHUB_LINK}/linearSinDistortion`;
+  const title = "MarchingCubesでボールの大きさを保ちボールの数を増やす";
+  const date = "2025.11.03";
+  const link = `${process.env.NEXT_PUBLIC_GITHUB_LINK}/metaball`;
 
   return (
     <div style={{ width: "100vw", minHeight: "100vh" }}>
@@ -17,7 +17,7 @@ export default function Page() {
         title={title}
         date={date}
         link={link}
-        canvas={<LinearSinDistortion isHome={false} />}
+        canvas={<Metaball isHome={false} />}
         memo={memo}
       />
     </div>

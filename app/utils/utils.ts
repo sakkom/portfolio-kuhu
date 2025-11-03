@@ -2,6 +2,9 @@ import GUI from "lil-gui";
 
 export function setGui() {
   const guiContainerElement = document.getElementById("guiContainer")!;
+  if (guiContainerElement) {
+    guiContainerElement.innerHTML = "";
+  }
   const gui = new GUI({
     container: guiContainerElement,
   });

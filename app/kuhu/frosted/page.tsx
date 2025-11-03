@@ -10,15 +10,14 @@ export default function Page() {
   const title =
     "EffectComposerですりガラス効果・マウスムーブで正方円内でエフェクト無効化";
   const date = "2025.10.31";
-  const github =
-    "https://github.com/sakkom/generate-poeme-like-bip39/blob/main/src/app/globals.css";
+  const link = `${process.env.NEXT_PUBLIC_GITHUB_LINK}/frosted`;
 
   return (
     <div style={{ width: "100vw", minHeight: "100vh" }}>
       <Article
         title={title}
         date={date}
-        link={github}
+        link={link}
         canvas={<Frosted />}
         memo={memo}
       />
