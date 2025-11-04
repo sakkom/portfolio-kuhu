@@ -22,7 +22,7 @@ function initCanvas(canvas: HTMLCanvasElement) {
 function initGui(props: GuiProps, isHome: boolean) {
   if (!isHome) {
     const gui = setGui();
-    gui.add(props, "pixelSize").min(1).max(50).step(1);
+    gui.add(props, "pixelSize").min(1).max(30).step(1);
   }
 }
 

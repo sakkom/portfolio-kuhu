@@ -101,7 +101,7 @@ export default function LinearSinDistortion({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const guiPropsRef = useRef<guiProps>({
-    freq: Math.PI * 2,
+    freq: Math.PI * 3,
     amp: 1.0 / 16.0,
   });
 

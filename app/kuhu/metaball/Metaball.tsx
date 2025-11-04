@@ -77,6 +77,7 @@ function initThreeBasics(
   light.position.set(0, 0, 1);
   scene.add(light);
 
+  // scene.background = new THREE.Color(0x00ff00);
   scene.background = new THREE.Color(0xfffff0);
 
   return { renderer, scene, cam, light };

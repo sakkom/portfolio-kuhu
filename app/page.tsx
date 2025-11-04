@@ -3,6 +3,7 @@ import Mosaic from "./kuhu/mosaic/Mosaic";
 import Frosted from "./kuhu/frosted/Frosted";
 import LinearSinDistortion from "./kuhu/linearSinDistortion/Linear";
 import Link from "next/link";
+import Metaball from "./kuhu/metaball/Metaball";
 
 interface ArticleData {
   id: number;
@@ -26,6 +27,11 @@ const articles: ArticleData[] = [
     title: "uv座標の正弦波ディストーションでの揺らぎ",
     date: "25.11.01",
   },
+  {
+    id: 3,
+    title: "MarchingCubesでボールの大きさを保ちボールの数を増やす",
+    date: "2025.11.03",
+  },
 ];
 
 export default function Home() {
@@ -42,6 +48,10 @@ export default function Home() {
       <div style={{ width: "50%" }}>
         <div>Novmember</div>
 
+        <Link href={"http://localhost:3000/kuhu/metaball"}>
+          <h1>{articles[3].title}</h1>
+          <Metaball isHome={true} />
+        </Link>
         <Link href={"http://localhost:3000/kuhu/linearSinDistortion"}>
           <h1>{articles[2].title}</h1>
           <LinearSinDistortion isHome={true} />
