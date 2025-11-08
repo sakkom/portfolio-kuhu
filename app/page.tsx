@@ -4,6 +4,7 @@ import Frosted from "./kuhu/frosted/Frosted";
 import LinearSinDistortion from "./kuhu/linearSinDistortion/Linear";
 import Link from "next/link";
 import Metaball from "./kuhu/metaball/Metaball";
+import Glitch from "./kuhu/glitch/Glitch";
 
 interface ArticleData {
   id: number;
@@ -32,6 +33,11 @@ const articles: ArticleData[] = [
     title: "MarchingCubesでボールの大きさを保ちボールの数を増やす",
     date: "2025.11.03",
   },
+  {
+    id: 4,
+    title: "セグメント分割によるランダムピクセル化グリッチ",
+    date: "2025.11.08",
+  },
 ];
 
 export default function Home() {
@@ -47,7 +53,10 @@ export default function Home() {
     >
       <div style={{ width: "50%" }}>
         <div>Novmember</div>
-
+        <Link href={"http://localhost:3000/kuhu/glitch"}>
+          <h1>{articles[4].title}</h1>
+          <Glitch isHome={true} />
+        </Link>
         <Link href={"http://localhost:3000/kuhu/metaball"}>
           <h1>{articles[3].title}</h1>
           <Metaball isHome={true} />
