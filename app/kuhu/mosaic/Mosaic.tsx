@@ -38,7 +38,7 @@ function initThreeBasics(
   light.intensity = 5;
   light.position.set(0, 0, 1);
   scene.add(light);
-  scene.background = new THREE.Color(0x000000);
+  scene.background = new THREE.Color(0xfffff0);
   cam.position.set(0, 0, 500);
   return { renderer, scene, cam };
 }

@@ -14,7 +14,7 @@ interface guiProps {
 
 function createRectGeometries(width: number, height: number) {
   const rects: THREE.Line[] = [];
-  const colors = [0xff00ff, 0xffff00, 0x00ffff];
+  const colors = [0xff00ff, 0x00ff00, 0x00ffff];
 
   function createRectPoints(width: number, height: number) {
     return [
@@ -31,12 +31,26 @@ function createRectGeometries(width: number, height: number) {
     const points = createRectPoints(width / size, height / size);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({
-      color: colors.reverse()[i],
+      color: colors[i],
     });
     const rect = new THREE.Line(geometry, material);
     rects.push(rect);
   }
-  return rects;
+  const line = [
+    new THREE.Vector2(-width / 2, height / 3),
+    new THREE.Vector2(width / 2, height / 3),
+  ];
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(line);
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+  const xLine = new THREE.Line(lineGeometry, lineMaterial);
+  const lineY = [
+    new THREE.Vector2(width / 3.5, height / 2),
+    new THREE.Vector2(width / 3.5, -height / 2),
+  ];
+  const ylineGeometry = new THREE.BufferGeometry().setFromPoints(lineY);
+  const ylineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+  const yLine = new THREE.Line(ylineGeometry, ylineMaterial);
+  return { rects, xLine, yLine };
 }
 
 function initCanvas(canvas: HTMLCanvasElement) {
@@ -74,7 +88,7 @@ function initThreeBasics(
   light.position.set(0, 0.5, 1);
   scene.add(light);
 
-  scene.background = new THREE.Color(0x000000);
+  scene.background = new THREE.Color(0xfffff0);
   cam.position.set(0, 0, 500);
 
   return { renderer, scene, cam, light };
@@ -115,8 +129,13 @@ export default function LinearSinDistortion({
       clientWidth,
       clientHeight,
     );
-    const rects = createRectGeometries(clientWidth, clientHeight);
+    const { rects, xLine, yLine } = createRectGeometries(
+      clientWidth,
+      clientHeight,
+    );
     rects.forEach((rect) => scene.add(rect));
+    scene.add(xLine);
+    scene.add(yLine);
     renderer.render(scene, cam);
 
     const { composer, linearPass } = initEffectPass(renderer, scene, cam);

@@ -5,6 +5,7 @@ import LinearSinDistortion from "./kuhu/linearSinDistortion/Linear";
 import Link from "next/link";
 import Metaball from "./kuhu/metaball/Metaball";
 import Glitch from "./kuhu/glitch/Glitch";
+import Ripple from "./kuhu/ripple/Ripple";
 
 interface ArticleData {
   id: number;
@@ -38,6 +39,11 @@ const articles: ArticleData[] = [
     title: "セグメント分割によるランダムピクセル化グリッチ",
     date: "2025.11.08",
   },
+  {
+    id: 5,
+    title: "uv座標のリップル効果",
+    date: "2025.11.10",
+  },
 ];
 
 export default function Home() {
@@ -53,21 +59,28 @@ export default function Home() {
     >
       <div style={{ width: "50%" }}>
         <div>Novmember</div>
+        <Link href={"http://localhost:3000/kuhu/ripple"}>
+          <h1>{articles[5].title}</h1>
+          {/*<Ripple isHome={true} />*/}
+          <Image src={"/gifs/article-05.gif"} alt="" width={700} height={500} />
+        </Link>
         <Link href={"http://localhost:3000/kuhu/glitch"}>
           <h1>{articles[4].title}</h1>
-          <Glitch isHome={true} />
+          {/*<Glitch isHome={true} />*/}
+          <Image src={"/gifs/article-04.gif"} alt="" width={700} height={500} />
         </Link>
         <Link href={"http://localhost:3000/kuhu/metaball"}>
           <h1>{articles[3].title}</h1>
-          <Metaball isHome={true} />
+          {/*<Metaball isHome={true} />*/}
+          <Image src={"/gifs/article-03.gif"} alt="" width={700} height={500} />
         </Link>
         <Link href={"http://localhost:3000/kuhu/linearSinDistortion"}>
           <h1>{articles[2].title}</h1>
-          <LinearSinDistortion isHome={true} />
+          <Image src={"/gifs/article-02.gif"} alt="" width={700} height={500} />
         </Link>
         <Link href={"http://localhost:3000/kuhu/frosted"}>
           <h1>{articles[1].title}</h1>
-          <Frosted isHome={true} />
+          <Image src={"/gifs/article-01.gif"} alt="" width={700} height={500} />
         </Link>
         <Link href={"http://localhost:3000/kuhu/mosaic"}>
           <h1>{articles[0].title}</h1>

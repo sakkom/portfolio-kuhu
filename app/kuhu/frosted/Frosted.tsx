@@ -38,13 +38,13 @@ function initThreeBasics(
   light.intensity = 5;
   light.position.set(0, 0, 1);
   scene.add(light);
-  scene.background = new THREE.Color(0x000000);
+  scene.background = new THREE.Color(0xfffff0);
   cam.position.set(0, 0, 500);
   return { renderer, scene, cam };
 }
 
-function createMesh() {
-  const geometry = new THREE.PlaneGeometry(700, 500);
+function createMesh(width: number, height: number) {
+  const geometry = new THREE.PlaneGeometry(width / 1.5, height / 1.5);
   const loader = new THREE.TextureLoader();
   const texture = loader.load("/texture-img-04.jpg");
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -89,7 +89,7 @@ export default function Frosted({ isHome = false }: { isHome?: boolean }) {
       clientHeight,
     );
 
-    const mesh = createMesh();
+    const mesh = createMesh(clientWidth, clientHeight);
     scene.add(mesh);
     renderer.render(scene, cam);
 
