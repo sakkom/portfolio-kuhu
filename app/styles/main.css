@@ -1,0 +1,17 @@
+#main-container {
+  width: 50%;
+  /*color: "#dddddd";*/
+}
+#main-container h1 {
+  font-size: 1rem;
+  /*color: "white";*/
+}
+#main-container a {
+  color: "#dddddd";
+}
+
+@media (max-width: 650px) {
+  #main-container {
+    width: 90%;
+  }
+}

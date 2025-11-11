@@ -6,12 +6,14 @@ import Link from "next/link";
 import Metaball from "./kuhu/metaball/Metaball";
 import Glitch from "./kuhu/glitch/Glitch";
 import Ripple from "./kuhu/ripple/Ripple";
+import "@/app/styles/main.css";
 
 interface ArticleData {
   id: number;
   title: string;
   date: string;
 }
+
 const articles: ArticleData[] = [
   {
     id: 0,
@@ -57,35 +59,141 @@ export default function Home() {
         alignItems: "center",
       }}
     >
-      <div style={{ width: "50%" }}>
-        <div>Novmember</div>
-        <Link href={"http://localhost:3000/kuhu/ripple"}>
-          <h1>{articles[5].title}</h1>
-          {/*<Ripple isHome={true} />*/}
-          <Image src={"/gifs/article-05.gif"} alt="" width={700} height={500} />
-        </Link>
-        <Link href={"http://localhost:3000/kuhu/glitch"}>
-          <h1>{articles[4].title}</h1>
-          {/*<Glitch isHome={true} />*/}
-          <Image src={"/gifs/article-04.gif"} alt="" width={700} height={500} />
-        </Link>
-        <Link href={"http://localhost:3000/kuhu/metaball"}>
-          <h1>{articles[3].title}</h1>
-          {/*<Metaball isHome={true} />*/}
-          <Image src={"/gifs/article-03.gif"} alt="" width={700} height={500} />
-        </Link>
-        <Link href={"http://localhost:3000/kuhu/linearSinDistortion"}>
-          <h1>{articles[2].title}</h1>
-          <Image src={"/gifs/article-02.gif"} alt="" width={700} height={500} />
-        </Link>
-        <Link href={"http://localhost:3000/kuhu/frosted"}>
-          <h1>{articles[1].title}</h1>
-          <Image src={"/gifs/article-01.gif"} alt="" width={700} height={500} />
-        </Link>
-        <Link href={"http://localhost:3000/kuhu/mosaic"}>
-          <h1>{articles[0].title}</h1>
-          <Mosaic isHome={true} />
-        </Link>
+      <div
+        style={{
+          margin: "2vmin 0",
+          backgroundColor: "#111111",
+          color: "#dddddd",
+          padding: "0vmin 2vmin",
+        }}
+      >
+        <h3>2025November</h3>
+      </div>
+      <div id="main-container">
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/ripple`}>
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[5].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-05.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{
+                width: "100%",
+                height: "auto",
+              }}
+            />
+          </Link>
+        </div>
+
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/glitch`}>
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[4].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-04.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{ width: "100%", height: "auto" }}
+            />
+          </Link>
+        </div>
+
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/metaball`}>
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[3].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-03.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{ width: "100%", height: "auto" }}
+            />
+          </Link>
+        </div>
+
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/linearSinDistortion`}
+          >
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[2].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-02.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{ width: "100%", height: "auto" }}
+            />
+          </Link>
+        </div>
+
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/frosted`}>
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[1].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-01.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{ width: "100%", height: "auto" }}
+            />
+          </Link>
+        </div>
+
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/mosaic`}>
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[0].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-00.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{ width: "100%", height: "auto" }}
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );
