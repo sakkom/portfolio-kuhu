@@ -21,23 +21,30 @@ vec2 randomOffset(vec2 pos) {
   ) * 2.0 - 1.0;
 }
 
-void main() {
-  float aspect = uResolution.x / uResolution.y;
+vec2 aspectVec(vec2 uResolution) {
+  if (uResolution.x > uResolution.y) {
+    return vec2(uResolution.x / uResolution.y, 1.0);
+  } else {
+    return vec2(1.0, uResolution.y / uResolution.x);
+  }
+}
 
-  vec2 aspectPos = position.xy * vec2(aspect, 1.0);
-  vec2 aspectMouse = uMouse * vec2(aspect, 1.0);
-  float aspectDist = length(aspectPos - aspectMouse);
+void main() {
+  vec2 aspect = aspectVec(uResolution);
+  vec2 pos = position.xy * aspect;
+  vec2 mouse = uMouse * aspect;
+  float aspectDist = length(pos - mouse);
 
   float radius = pow(aspectDist * 1.5, 5.0);
-  vec2 randomOffset = randomOffset(aspectPos);
-  vec2 random = randomOffset * radius / vec2(aspect, 1.0);
+  vec2 offset = randomOffset(pos);
+  vec2 random = offset * radius / aspect;
 
-  vec3 pos = vec3(position.xy + random, 0.0);
-  gl_Position = vec4(pos, 1.0);
+  vec3 p = vec3(position.xy + random, 0.0);
+  gl_Position = vec4(p, 1.0);
 
   vColor = vec4(vec3(0.0), 1.0);
 
-  float sizeMultiplier = pow(length(vec2(aspect * 2.0, 2.0)) - aspectDist, 3.0);
+  float sizeMultiplier = pow(length(aspect * 2.0) - aspectDist, 3.0);
   gl_PointSize = size * sizeMultiplier;
 }
 ` ;
