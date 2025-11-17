@@ -28,10 +28,14 @@ float rand2(vec2 p) {
 
 void main() {
   vec2 uv = vUv;
-  vec2 normalizedUV = (gl_FragCoord.xy * 2.0 - uResolution.xy) / uResolution.xy;
+  vec2 normalizedUV = (gl_FragCoord.xy * 2.0 - uResolution.xy) / max(uResolution.x, uResolution.y);
+  // vec2 normalizedUV = (gl_FragCoord.xy * 2.0 - uResolution.xy) / uResolution.xy;
   float dist = length(normalizedUV);
+  // float dist = max(abs(normalizedUV.x), abs(normalizedUV.y));
   float angle = atan(normalizedUV.y, normalizedUV.x);
+  // angle += sin(dist * 10.0 - uTime * 3.0) * 0.5;
   angle = angle < 0.0 ? angle + 6.28318 : angle;
+  // angle += -uTime * 0.5;
 
   float seg = uSeg;
   float segAngle = 6.28318 / seg; //3.14
@@ -45,9 +49,11 @@ void main() {
   vec2 kaleidoUV;
   kaleidoUV.x = cos(angle) * dist;
   kaleidoUV.y = sin(angle) * dist;
+  // kaleidoUV.x += sin(uTime * 2.0) * 0.1;
+  // kaleidoUV.y += cos(uTime * 2.0) * 0.1;
 
   kaleidoUV = kaleidoUV * 0.5 + 0.5;
-  kaleidoUV *= 0.8;
+  kaleidoUV *= 0.9;
 
   // gl_FragColor = vec4(angle / halfSegment, 0.0, 0.0, 1.0);
   // gl_FragColor = color;

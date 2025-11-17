@@ -7,7 +7,7 @@ import { Article } from "../../comps/Article";
 import Kaleido from "./Kaleido";
 
 export default function Page() {
-  const title = "セグメント分割によるランダムピクセル化グリッチ";
+  const title = "kaleido scope";
   const date = "2025.11.08";
   const link = `${process.env.NEXT_PUBLIC_GITHUB_LINK}/glitch`;
 

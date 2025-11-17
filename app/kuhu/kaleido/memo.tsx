@@ -1,6 +1,9 @@
 "use client";
 import { kaleidoShader } from "./shader";
 
+//https://zenn.dev/raihara3/articles/20220529_threejs_japanese_text
+// https://gero3.github.io/facetype.js/
+
 const code0 = `
     float trigger = rand1(floor(uTime * 5.0));
     if(trigger > 0.7) {
