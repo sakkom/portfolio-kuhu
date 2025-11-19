@@ -2,18 +2,21 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { vertexShader, fragmentShader } from "./shader";
+import { randVertexShader } from "./shader";
 
-export default function Page() {
+export default function RandVertex() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = canvasRef.current.clientWidth;
+    canvas.height = canvasRef.current.clientWidth;
     /*initThreeBasic */
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(
+      canvasRef.current.clientWidth,
+      canvasRef.current.clientHeight,
+    );
     renderer.setPixelRatio(window.devicePixelRatio);
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xfffff0);
@@ -33,18 +36,21 @@ export default function Page() {
     const colors = [];
     const sizes = [];
 
-    const space = window.innerWidth / 100;
-    for (let i = 0; i <= window.innerWidth; i += space) {
-      for (let j = 0; j <= window.innerHeight; j += space) {
-        const x = i / window.innerWidth;
-        const y = j / window.innerHeight;
+    const space = canvasRef.current.clientWidth / 10;
+    for (let i = 0; i <= canvasRef.current.clientWidth; i += space) {
+      for (let j = 0; j <= canvasRef.current.clientHeight; j += space) {
+        const w = canvasRef.current?.clientWidth;
+        const h = canvasRef.current?.clientHeight;
+        const x = i / w;
+        const y = j / h;
         const signedX = x * 2.0 - 1.0;
         const signedY = y * 2.0 - 1.0;
 
         positions.push(signedX, signedY, 0);
         colors.push(x, y, 0.5, 1.0);
-        //1440/1440 のときに0.5pxが基準ポイントサイズ
-        sizes.push((window.innerWidth / 1440) * 0.5);
+        /*開発環境820pxから比例*/
+        /*float scale = pow(1.0 - normalizeDist, 3.0);により指定可能*/
+        sizes.push((w / 820) * 180.0);
       }
     }
 
@@ -56,36 +62,31 @@ export default function Page() {
     geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 4));
     geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
 
-    const uniforms = {
-      uTime: { value: 0.0 },
-      uMouse: { value: new THREE.Vector2(0.0, 0.0) },
-      uResolution: {
-        value: new THREE.Vector2(window.innerWidth, window.innerHeight),
-      },
-    };
-
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms,
-    });
+    randVertexShader.uniforms.uResolution.value.set(
+      canvasRef.current?.clientWidth,
+      canvasRef.current?.clientHeight,
+    );
+    const material = new THREE.ShaderMaterial(randVertexShader);
     const points = new THREE.Points(geometry, material);
     scene.add(points);
 
     window.addEventListener("pointermove", (e) => {
-      const x = e.pageX / window.innerWidth;
-      const y = e.pageY / window.innerHeight;
+      if (!canvasRef.current) return;
+      const w = canvasRef.current?.clientWidth;
+      const h = canvasRef.current?.clientHeight;
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const x = (e.pageX - rect.left) / w;
+      const y = (e.pageY - rect.top) / h;
       const signedX = x * 2.0 - 1.0;
       const signedY = y * 2.0 - 1.0;
-      uniforms.uMouse.value.set(signedX, -signedY);
+      randVertexShader.uniforms.uMouse.value.set(signedX, -signedY);
     });
 
     const animate = () => {
       requestAnimationFrame(animate);
-      material.uniforms.uTime.value += 0.0167;
       renderer.render(scene, cam);
     };
     animate();
   }, []);
-  return <canvas ref={canvasRef} />;
+  return <canvas className="article-canvas" ref={canvasRef} />;
 }

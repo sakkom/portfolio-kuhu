@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import hljs from "highlight.js";
-import typescript from "highlight.js/lib/languages/typescript";
-import glsl from "highlight.js/lib/languages/glsl";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 

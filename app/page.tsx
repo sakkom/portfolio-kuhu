@@ -46,6 +46,11 @@ const articles: ArticleData[] = [
     title: "uv座標のリップル効果",
     date: "2025.11.10",
   },
+  {
+    id: 6,
+    title: "GLSLスクール2025課題1・頂点シェーダー",
+    date: "2025.11.19",
+  },
 ];
 
 export default function Home() {
@@ -70,6 +75,28 @@ export default function Home() {
         <h3>2025November</h3>
       </div>
       <div id="main-container">
+        <div style={{ padding: "2vmin 10vmin" }}>
+          <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/randVertex`}>
+            <div
+              style={{
+                backgroundColor: "#111111",
+                padding: "0 2vmin",
+              }}
+            >
+              <h1>{articles[6].title}</h1>
+            </div>
+            <Image
+              src={"/gifs/article-06.gif"}
+              alt=""
+              width={700}
+              height={500}
+              style={{
+                width: "100%",
+                height: "auto",
+              }}
+            />
+          </Link>
+        </div>
         <div style={{ padding: "2vmin 10vmin" }}>
           <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/kuhu/ripple`}>
             <div
