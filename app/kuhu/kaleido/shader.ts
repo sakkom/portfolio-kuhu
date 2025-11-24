@@ -1,18 +1,18 @@
 export const kaleidoShader = {
-uniforms : {
-tDiffuse : { value : null },
-uResolution : { value : null },
-uTime : { value : 0 },
-uSeg : { value : 0 },
-},
-vertexShader : `
+  uniforms: {
+    tDiffuse: { value: null },
+    uResolution: { value: null },
+    uTime: { value: 0 },
+    uSeg: { value: 0 },
+  },
+  vertexShader: `
 out vec2 vUv;
 void main() {
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
 `,
-fragmentShader : `
+  fragmentShader: `
 precision mediump float;
 uniform sampler2D tDiffuse;
 uniform vec2 uResolution;
@@ -60,4 +60,4 @@ void main() {
   gl_FragColor = texture2D(tDiffuse, kaleidoUV);
 }
 `,
-} ;
+};

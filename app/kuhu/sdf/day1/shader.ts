@@ -11,7 +11,7 @@ export const sdfShader = {
     vUv = position.xy;
     gl_Position = vec4(position, 1.0);
   }
-  `,
+`,
   fragmentShader: `
   uniform vec2 uResolution;
   uniform float uTime;
@@ -26,25 +26,28 @@ export const sdfShader = {
     return max(d.x, d.y);
   }
 
-  float sdUnion(float d1, float d2) {
+  float opUnion(float d1, float d2) {
     return min(d1, d2);
   }
 
-  float sdSubtraction(float d1, float d2) {
+  /*
+      二つのベン図空間、反転した-空間とそのままの空間が合点するときがdist < 0が成立。
+      max()弾かれの概念。
+    */
+  float opSubtraction(float d1, float d2) {
     return max(-d1, d2);
   }
 
-  float sdIntersection(float d1, float d2) {
+  float opIntersection(float d1, float d2) {
     return max(d1, d2);
   }
 
   //https://iquilezles.org/articles/distfunctions/
-  float opSmoothUnion( float d1, float d2, float k ) {
-      k *= 4.0;
-      float h = max(k-abs(d1-d2),0.0);
-      return min(d1, d2) - h*h*0.25/k;
+  float opSmoothUnion(float d1, float d2, float k) {
+    k *= 4.0;
+    float h = max(k - abs(d1 - d2), 0.0);
+    return min(d1, d2) - h * h * 0.25 / k;
   }
-
 
   void main() {
     vec2 uv = vUv;
@@ -53,18 +56,13 @@ export const sdfShader = {
     float d1 = sdCircle(uv - vec2(-0.3, 0.0), 0.3);
     float d2 = sdSquare(uv - vec2(0.3, 0.0), 0.5);
 
-    // float dist = min(dist1, dist2);
-    /*
-      二つのベン図空間、反転した-空間とそのままの空間が合点するときがdist < 0が成立。
-      max()弾かれの概念。
-    */
-    // float dist = sdUnion(d1, d2);
-    // float dist = sdSubtraction(d1, d2);
-    // float dist = sdIntersection(d1, d2);
-    float dist  = opSmoothUnion(d1, d2, 0.1);
+    // float dist = opUnion(d1, d2);
+    // float dist = opSubtraction(d1, d2);
+    // float dist = opIntersection(d1, d2);
+    float dist = opSmoothUnion(d1, d2, 0.1);
 
     vec3 color;
-    if(dist < 0.0) {
+    if (dist < 0.0) {
       color = vec3(1.0, 0.0, 0.0);
     } else if (dist < 0.01) {
       color = vec3(1.0);
@@ -75,5 +73,5 @@ export const sdfShader = {
 
     gl_FragColor = vec4(color, 1.0);
   }
-  `,
+`,
 };
