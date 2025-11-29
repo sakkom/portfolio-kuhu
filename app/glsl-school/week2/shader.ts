@@ -56,6 +56,8 @@ void main() {
   for (int i = 0; i < 5; i++) {
     vec3 col = texture2D(uTexture0, uv).rgb;
     float l = lumi(col);
+    /*白と黒が隣り合う線形において再帰的に入れ替わる*/
+    // uv.x += (l - 0.5) * 0.01;
     uv.x += (l - 0.5) * cos(uTime * 0.5) * 0.2;
     uv.y += (l - 0.5) * sin(uTime * 0.5) * 0.2;
   }
