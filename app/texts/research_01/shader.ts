@@ -58,7 +58,7 @@ float rand2(vec2 p) {
 
 void main() {
   vec2 uv = vUv;
-  uv.x *= uResolution.x / uResolution.y;
+  // uv.x *= uResolution.x / uResolution.y;
   float offset = sin(length(uv) * 10.0) * 0.2;
   float offset2 = sin(uv.y * 10.0) * 0.1;
   float offset3 = mix(offset, offset2, sin(uTime));
