@@ -33,9 +33,9 @@ void main() {
   float l = lumi(bgTex.rgb);
   vec3 newPosition = position;
   if (uLayer == 0.0) {
-    newPosition.z = l < 0.5 ? -1.0 : 1.0;
+    // newPosition.z = l < 0.5 ? -1.0 : 1.0;
   } else {
-    newPosition.z = l < 0.5 ? 1.0 : -1.0;
+    // newPosition.z = l < 0.5 ? 1.0 : -1.0;
   }
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
 }
@@ -53,14 +53,24 @@ float lumi(vec3 color) {
 
 void main() {
   vec2 uv = vUv;
+  uv.x = abs(uv.x - 0.5) + 0.5;
   for (int i = 0; i < 5; i++) {
     vec3 col = texture2D(uTexture0, uv).rgb;
     float l = lumi(col);
     /*白と黒が隣り合う線形において再帰的に入れ替わる*/
     // uv.x += (l - 0.5) * 0.01;
-    uv.x += (l - 0.5) * cos(uTime * 0.5) * 0.2;
-    uv.y += (l - 0.5) * sin(uTime * 0.5) * 0.2;
+    vec2 circle = vec2(cos(uTime), sin(uTime)) * 0.05;
+    vec2 dir = normalize(uv - 0.5 + circle);
+    uv += (l - 0.5) * dir * 0.5;
+    float dist = length(uv - 0.5 + circle);
+    float a = 1.0 - dist * (5.0 - float(i));
+    mat2 rot = mat2(cos(a), -sin(a), sin(a), cos(a));
+    uv = rot * (uv - 0.5) + 0.5;
   }
-  gl_FragColor = texture2D(uTexture0, uv);
+  vec3 finalCol = texture2D(uTexture0, uv).rgb;
+  float l = lumi(finalCol);
+  vec3 color = vec3(l);
+
+  gl_FragColor = vec4(finalCol, 1.0);
 }
 ` }
