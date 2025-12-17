@@ -58,7 +58,7 @@ float rand2(vec2 p) {
 
 void main() {
   vec2 uv = vUv;
-  // uv.x *= uResolution.x / uResolution.y;
+  uv.x *= uResolution.x / uResolution.y;
   float offset = sin(length(uv) * 10.0) * 0.2;
   float offset2 = sin(uv.y * 10.0) * 0.1;
   float offset3 = mix(offset, offset2, sin(uTime));
@@ -77,7 +77,7 @@ void main() {
     float speed = hash(fi + 1.0);
     //[0.3, 0.5]
     float scale = 0.3 + fi * 0.5;
-    float radius = 0.1 + fi / 5.0 * 0.5;
+    float radius = 1.0 + fi / 5.0 * 0.5;
     // float radius = 0.3;
 
     vec2 offset = lemniscate(uTime * speed, scale);
@@ -103,7 +103,7 @@ void main() {
       abs(cos(abs(dist) * 5.0 + uTime * 0.5)),
       abs(sin(abs(dist) * 3.0))
     ) * 15.0;
-  insideColor = mix(vec3(1.0), insideColor, 0.05);
+  insideColor = mix(vec3(1.0), insideColor, 0.1);
 
   insideColor += noise;
 

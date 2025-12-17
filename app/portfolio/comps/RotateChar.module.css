@@ -1,0 +1,26 @@
+@keyframes startChar {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes yuragiChar {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(var(--afterRotate));
+  }
+}
+
+/*yuragiは1秒後に発火*/
+.animated {
+  animation:
+    startChar 2s ease-in var(--delay, 0.1s) forwards,
+    yuragiChar 1s ease-in 3s infinite;
+}

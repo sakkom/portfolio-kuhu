@@ -89,7 +89,12 @@ export default function Home() {
           {[...articles].reverse().map((a: ArticleData) => (
             <div key={a.id} style={{ padding: "2vmin 10vmin" }}>
               <Link href={`${process.env.NEXT_PUBLIC_LOCAL}/${a.path}`}>
-                <div style={{ backgroundColor: "#111111", padding: "0 2vmin" }}>
+                <div
+                  style={{
+                    backgroundColor: "#111111",
+                    padding: "0 2vmin",
+                  }}
+                >
                   <h1>{a.title}</h1>
                 </div>
 
@@ -98,7 +103,7 @@ export default function Home() {
                   alt={a.title}
                   width={700}
                   height={500}
-                  style={{ width: "100%", height: "auto" }}
+                  style={{ width: "100%", height: "auto", opacity: 0.8 }}
                 />
               </Link>
             </div>
