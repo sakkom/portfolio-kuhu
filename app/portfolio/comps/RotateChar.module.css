@@ -22,6 +22,6 @@
 .animated {
   animation:
   /*start default 2 test 0.5*/
-    startChar 0.1s ease-in var(--delay, 0.1s) forwards,
+    startChar 2s ease-in var(--delay, 0.1s) forwards,
     yuragiChar 1s ease-in 3s infinite;
 }
