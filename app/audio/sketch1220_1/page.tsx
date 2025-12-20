@@ -23,9 +23,11 @@ export default function Page() {
     analyser.connect(speaker);
 
     // const timeData = new Float32Array(analyser.fftSize);
-    analyser.fftSize = 512; //11
+    analyser.fftSize = 32; //11
     const timeData = new Float32Array(analyser.fftSize);
-    const timeTexture512 = new Float32Array(512 * 512);
+    const timeTexture512 = new Float32Array(
+      analyser.fftSize * analyser.fftSize,
+    );
 
     /*three */
     const scene = new THREE.Scene();
@@ -35,15 +37,18 @@ export default function Page() {
 
     const dataTexture = new THREE.DataTexture(
       timeTexture512,
-      512,
-      512,
+      analyser.fftSize,
+      analyser.fftSize,
       THREE.RedFormat,
       THREE.FloatType,
     );
     dataTexture.needsUpdate = true;
 
     const material = new THREE.ShaderMaterial({
-      uniforms: { uAudioTexture: { value: dataTexture } },
+      uniforms: {
+        uAudioTexture: { value: dataTexture },
+        uTime: { value: null },
+      },
       vertexShader: `
         varying vec2 vUv;
         void main() {
@@ -54,28 +59,34 @@ export default function Page() {
       fragmentShader: `
         varying vec2 vUv;
         uniform sampler2D uAudioTexture;
+        uniform float uTime;
 
         void main() {
           vec2 uv = vUv;
 
-          float wave = texture2D(uAudioTexture, vec2(uv.x)).r;
+          vec2 pos = uv;
+          // pos.x = pos.x * 5.0;
 
-          float amp = 0.2;
-          float offset = 0.5;
-          float y = wave * amp + offset;
+          for(float i = 0.0; i < 100.0; i++) {
+          //[-1, 1]
+            float noise = texture2D(uAudioTexture, pos).r;
+            //[0, 1]
+            noise = (noise + 1.0) * 0.5;
+            //高音倍増
+            noise *= 5.0;
 
-          float length = length(uv - 0.5);
+            float angle = noise * 6.28;
+            vec2 filedDir = vec2(cos(angle), sin(angle));
+            pos += filedDir * 0.05;
+            // pos += filedDir * 0.1;
+            // pos = pos.yx;
+          }
 
-          float dist = abs(uv.y - y);
-          float mono = step(dist, 0.01);
-          mono = 1.0 - mono;
-          float addDist = smoothstep(1.0, -0.0, dist);
-          addDist = 1.0 - addDist;
+          float dist = length(pos - uv);
+          float color = step(dist, fract(uTime));
+          // float color = step(dist, 0.5);
 
-          vec3 finalColor = vec3(mono + addDist );
-
-
-          gl_FragColor = vec4(finalColor, 1.0);
+          gl_FragColor = vec4(vec3(color), 1.0);
         }
       `,
     });
@@ -87,7 +98,7 @@ export default function Page() {
     let refId = 0;
     const clock = new THREE.Clock();
 
-    let counter = 511;
+    let counter = 0;
     const handleClick = () => {
       ctx.resume();
       const audio = new Audio("/audio/audio-01.mp3");
@@ -100,13 +111,15 @@ export default function Page() {
         // const noteI = Math.floor(t) % notes.length;
         // osc.frequency.value = notes[noteI];
         analyser.getFloatTimeDomainData(timeData);
+        console.log(timeData);
 
         /*three */
-        timeTexture512.set(timeData, counter * 512);
-        counter--;
-        if (counter < 0) counter = 511;
+        timeTexture512.set(timeData, counter * analyser.fftSize);
+        counter++;
+        if (counter >= analyser.fftSize) counter = 0;
 
         dataTexture.needsUpdate = true;
+        material.uniforms.uTime.value += 0.167;
         renderer.render(scene, camera);
 
         refId = requestAnimationFrame(loop);
