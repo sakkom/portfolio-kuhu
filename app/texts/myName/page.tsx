@@ -77,7 +77,7 @@ function createImg() {
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
   // ctx.strokeRect(0, 0, 500, 500);
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   const lines = ["HELLO", "MY NAME IS", "SAKAMAHARUKI"];
   const boxSize = 1000;
   const fontSize = boxSize / 3;

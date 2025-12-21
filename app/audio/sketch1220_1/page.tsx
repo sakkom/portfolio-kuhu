@@ -2,9 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { time } from "three/src/nodes/TSL.js";
-
-const notes = [261.63, 293.66, 329.63, 349.23, 392.0, 440.0, 493.88, 523.25];
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,12 +15,13 @@ export default function Page() {
 
     // const osc = ctx.createOscillator();
     const analyser = ctx.createAnalyser();
+    analyser.smoothingTimeConstant = 1.0;
 
     // osc.connect(analyser);
     analyser.connect(speaker);
 
     // const timeData = new Float32Array(analyser.fftSize);
-    analyser.fftSize = 32; //11
+    analyser.fftSize = 32;
     const timeData = new Float32Array(analyser.fftSize);
     const timeTexture512 = new Float32Array(
       analyser.fftSize * analyser.fftSize,
@@ -78,6 +76,7 @@ export default function Page() {
             float angle = noise * 6.28;
             vec2 filedDir = vec2(cos(angle), sin(angle));
             pos += filedDir * 0.05;
+
             // pos += filedDir * 0.1;
             // pos = pos.yx;
           }
