@@ -3,8 +3,9 @@ import { create } from "node:domain";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { myNameShader } from "./shader";
 
-function createImg() {
+export function createMyname() {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
@@ -23,56 +24,7 @@ function createImg() {
 
   ctx.strokeStyle = "black";
   ctx.lineWidth = 10;
-  // ctx.strokeRect(0, 0, w, h);
-
-  // ctx.fillStyle = "black";
-  // ctx.font = "bold 150px 'Georgia'";
-  // ctx.textAlign = "left";
-  // ctx.textBaseline = "middle";
-
-  // const lineHeight = 75;
-  // const lineWidth = 200;
-  // ctx.textAlign = "center";
-  // ctx.fillText("Hello ", w / 2, h / 2 - lineHeight * 3);
-  // ctx.textAlign = "center";
-  // ctx.fillText("MY NAME IS ", w / 2, h / 2 - lineHeight);
-  // ctx.textAlign = "center";
-  // ctx.fillText("sakama haruki", w / 2, h / 2 + lineHeight * 1.3);
-
-  // const lineHeight = 55;
-  // ctx.font = "bold 120px 'Georgia'";
-  // ctx.textBaseline = "middle";
-  // const text = "hello my name is sakama haruki ";
-  // for (let i = 0; i < 1; i++) {
-  // const widthPosition = Math.random() * -w;
-  // text.split("").map((char, i) => {
-  //   const waveY = (Math.sin(i * 0.6) * h) / 4;
-  //   ctx.fillText(char, i * 68, h / 2 + waveY);
-  // });
-  // if (i % 2 == 0) {
-  //   // ctx.filter = `blur(${(i / 9) * 50}px)`;
-  //   ctx.fillText(text, 0, h / 2 + i * lineHeight);
-  //   ctx.filter = "none";
-  // } else {
-  //   // ctx.filter = `blur(${((i + 1) / 9) * 50}px)`;
-  //   // ctx.fillText(text, widthPosition, h / 2 - (i + 1) * lineHeight);
-  //   ctx.filter = "none";
-  // }
-  // }
-
-  // console.log(lines);
-  //
-  // const lineHeight = 300;
-  // ctx.font = "bold 150px 'Georgia'";
-  // for (let y = 0; y < lines.length; y++) {
-  //   const char = lines[y].split("");
-  //   for (let x = 0; x < char.length; x++) {
-  //     ctx.fillText(char[x], x * 150, (y + 1) * lineHeight);
-  //   }
-  // }
-
-  // ctx.fillStyle = "red";
-  // ctx.fillRect(0, 0, w, 450);
+  ctx.strokeRect(0, 0, w, h);
 
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
@@ -89,8 +41,9 @@ function createImg() {
     const charWidth = lineWidth / line.length;
     const scaleX = boxSize / lineWidth;
     ctx.save();
+    // ctx.translate(w / 2, h / 3.5);
     ctx.scale(scaleX, 1 * 1.2);
-    ctx.fillText(line, 0, i * fontSize * 0.75);
+    ctx.fillText(line, 0, i * fontSize * 0.85);
     ctx.restore();
   });
 
@@ -126,34 +79,31 @@ export default function Page() {
       0.1,
       100,
     );
-    cam.position.set(0, 0, 10.0);
+    cam.position.set(0, 0, 3.0);
 
-    const controls = new OrbitControls(cam, canvas);
-    controls.rotateSpeed = 1.0;
+    // const controls = new OrbitControls(cam, canvas);
+    // controls.rotateSpeed = 1.0;
 
-    const img = new THREE.CanvasTexture(createImg());
+    const img = new THREE.CanvasTexture(createMyname());
     const aspect = window.innerWidth / window.innerHeight;
     const geometry = new THREE.PlaneGeometry(2, 2, 100);
     // const geometry = new THREE.SphereGeometry(2, 50, 50);
 
-    const material = new THREE.MeshBasicMaterial({
-      transparent: true,
-      // color: 0xffffff,
-      // wireframe: true,
-      map: img,
-      side: THREE.DoubleSide,
-    });
+    const material = new THREE.ShaderMaterial(myNameShader);
 
-    const s = new THREE.Mesh(geometry, material);
-    scene.add(s);
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
     // s.rotateY(-0.5);
 
     const clock = new THREE.Clock();
     const animate = () => {
+      material.uniforms.uTexture.value = img;
+      material.uniforms.uTime.value += 0.33;
+
+      renderer.render(scene, cam);
       requestAnimationFrame(animate);
       // s.rotateY(-0.01);
-      controls.update();
-      renderer.render(scene, cam);
+      // controls.update();
     };
 
     animate();

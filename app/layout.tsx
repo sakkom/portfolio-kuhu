@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { M_PLUS_Rounded_1c } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 
 const notoSansJP = M_PLUS_Rounded_1c({
   weight: "400",
@@ -19,7 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${notoSansJP.className} antialiased`}>{children}</body>
+      <body className={`${notoSansJP.className} antialiased`}>
+        {children}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/ccapture.js@1.1.0/build/CCapture.all.min.js"
+          strategy="beforeInteractive"
+        />
+      </body>
     </html>
   );
 }
