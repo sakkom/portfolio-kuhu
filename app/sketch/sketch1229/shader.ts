@@ -57,12 +57,16 @@ void main() {
       gridPos.y = mod(j, 2.0) == 0.0 ? gridPos.y - (j / 2.0) * gridSpace : gridPos.y + ((j + 1.0) / 2.0) * gridSpace;
       gridPos.x = mod(i, 2.0) == 0.0 ? gridPos.x - (i / 2.0) * gridSpace : gridPos.x + ((i + 1.0) / 2.0) * gridSpace;
 
-      float ball = length(pos - gridPos) - halfPoint * 2.0;
+      float circles = 0.0;
+      for (float i = 0.0; i < 20.0; i++) {
+        float ball = length(pos - gridPos) - halfPoint * 2.0 * i / 20.0;
+        float edge = smoothstep(0.01, -0.00, abs(ball));
+        circles += edge;
+      }
+      gridBalls += circles;
+
       float box = max(abs(pos.x - gridPos.x), abs(pos.y - gridPos.y)) - 1.0;
-      float shape = mix(ball, box, fract(uTime * 0.1));
-      float edge = smoothstep(0.01, -0.00, abs(ball));
       float boxEdge = smoothstep(0.01, -0.00, abs(box));
-      gridBalls += edge;
       gridBox += boxEdge;
 
       for (float b = 0.0; b < 2.0; b++) {
