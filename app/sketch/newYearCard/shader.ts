@@ -29,6 +29,10 @@ vec3 hsl2rgb(vec3 hsl) {
   return l + s * (rgb - 0.5) * (1.0 - abs(2.0 * l - 1.0));
 }
 
+float rand1(float y) {
+  return fract(sin(y * 12.9898) * 43758.5453123);
+}
+
 void main() {
   vec2 uv = vUv;
   uv.y *= 1.5;
@@ -57,14 +61,20 @@ void main() {
 
     vec2 tangent = vec2(-normal.y, normal.x);
 
-    vec3 color = hsl2rgb(vec3(uTime + i / 30.0, 0.5, 0.5));
+    vec3 color = hsl2rgb(vec3(uTime + i / 30.0, 1.0, 0.5));
     vec3 e = step(0.1, edge) * color;
     finalCol += e;
     pos = pos * 1.1;
-    // pos.x += pos.x * 0.1;
+    // pos.x += (rand1(floor(uTime * 1.0)) - 0.5) * pos.x;
+    // pos.x *= (rand1(floor(uTime * 1.0)) - 0.5) * pos.x;
   }
 
-  gl_FragColor = vec4(vec3(1.0 - finalCol) / 1.0, 1.0);
+  vec3 object = finalCol;
+  // float bg1 = rand1(floor(uTime * 1.0));
+  float bg1 = length(pos);
+  vec3 final = mix(object, vec3(bg1), step(1.0, object.x));
+
+  gl_FragColor = vec4(object, 1.0);
   // gl_FragColor = texture2D(uTex, uv);
 }
 
