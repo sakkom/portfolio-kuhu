@@ -1,10 +1,10 @@
 export const angleAudioShader = {
-uniforms : {
-uTime : { value : 0 },
-uPrevTex : { value : null },
-uAudio : { value : null },
-},
-vertexShader : `
+  uniforms: {
+    uTime: { value: 0 },
+    uPrevTex: { value: null },
+    uAudio: { value: null },
+  },
+  vertexShader: `
 varying vec2 vUv;
 
 void main() {
@@ -12,7 +12,7 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
 `,
-fragmentShader : `
+  fragmentShader: `
 varying vec2 vUv;
 uniform sampler2D uPrevTex;
 uniform sampler2D uAudio;
@@ -67,4 +67,4 @@ void main() {
   gl_FragColor = vec4(vec3(color + tex), 1.0);
 }
 `,
-} ;
+};
