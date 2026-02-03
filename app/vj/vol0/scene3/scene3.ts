@@ -1,4 +1,4 @@
-export const sketch1230Shader = {
+export const scene3Shader = {
 uniforms : {
 uRmsTime : { value : 0.0 },
 },
