@@ -91,6 +91,7 @@ export default function DataMoshing() {
 
             float updateMask = smoothstep(.6, 1., diff);
 
+
             vec4 decayedPrev = previous * 0.99;
 
             // vec4 result = mix(decayedPrev, current, updateMask);
