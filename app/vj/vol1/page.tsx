@@ -36,6 +36,7 @@ import { AudioDistortion } from "./postProcessing/audioDistorsion";
 import { layerVol1 } from "./layer/layer";
 import { NegaShader } from "./postProcessing/negaPos";
 import { ColorShader } from "./postProcessing/colorShader";
+import { fbShader } from "./fb";
 
 interface Sketch {
   mesh: THREE.Object3D;
@@ -62,6 +63,8 @@ export default function Page() {
   /*layer */
   const isLayer0 = useRef<boolean>(false);
   const isLayer1 = useRef<boolean>(false);
+  /*fb */
+  const fbCC = new Float32Array(6);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -73,8 +76,23 @@ export default function Page() {
     light.position.set(0, 1, 0);
     scene.add(light);
 
+    /*pinpon */
+    const canvas = canvasRef.current;
+    const fbScene = new THREE.Scene();
+    const fbCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const sketchTarget = new THREE.WebGLRenderTarget(
+      canvas.width,
+      canvas.height,
+    );
+    const targetA = new THREE.WebGLRenderTarget(canvas.width, canvas.height);
+    const targetB = new THREE.WebGLRenderTarget(canvas.width, canvas.height);
+    const fbGeometry = new THREE.PlaneGeometry(2, 2);
+    const fbMaterial = new THREE.ShaderMaterial(fbShader);
+    const fbSketch = new THREE.Mesh(fbGeometry, fbMaterial);
+    fbScene.add(fbSketch);
+
     /*composer */
-    const composer = new EffectComposer(renderer);
+    const composer = new EffectComposer(renderer, sketchTarget);
     composer.setPixelRatio(window.devicePixelRatio);
     composer.setSize(window.innerWidth, window.innerHeight);
     const renderPass = new RenderPass(scene, camera);
@@ -213,6 +231,11 @@ export default function Page() {
           if (status == 176 && data1 == 15) {
             colorShaderPass.uniforms.uLevel.value = data2 / 127;
           }
+          if (status == 176 && data1 >= 16 && data1 <= 21) {
+            const index = data1 - 16;
+            fbCC[index] = data2 / 127;
+            fbMaterial.uniforms.uCC.value = fbCC;
+          }
           /*config */
           if (status == 176 && data1 == 27) {
             ampBufferNum.current = (data2 / 127) * 10;
@@ -239,7 +262,9 @@ export default function Page() {
       // const audio = new Audio(
       //   "/audio/sample-pack-link-in-bio-dopetronic-aliens-in-my-basement-331356.mp3",
       // );
-      const audio = new Audio("/audio/no-sleep-hiphop-music-473847.mp3");
+      const audio = new Audio(
+        "/audio/fassounds-good-night-lofi-cozy-chill-music-160166.mp3",
+      );
       // const devices = await navigator.mediaDevices.enumerateDevices();
       // const audioinputs = devices.filter((d) => d.kind == "audioinput");
       // // console.log(audioinputs);
@@ -257,6 +282,7 @@ export default function Page() {
 
       let bpmCounter = 0;
       let frameCount = 0;
+      let flip = false;
       const loop = () => {
         const time = clock.getElapsedTime();
         light.position.set(Math.cos(time), 1, Math.sin(time));
@@ -347,7 +373,21 @@ export default function Page() {
           bpmCounter = bpmCount;
         }
 
+        /*pinpon */
+        const readBuffer = flip ? targetA : targetB;
+        const writeBuffer = flip ? targetB : targetA;
         composer.render();
+        fbMaterial.uniforms.uTime.value = clock.getElapsedTime();
+        fbMaterial.uniforms.tCurrent.value = sketchTarget.texture;
+        fbMaterial.uniforms.tPrev.value = readBuffer.texture;
+        renderer.setRenderTarget(writeBuffer);
+        renderer.render(fbScene, fbCamera);
+        renderer.setRenderTarget(null);
+        renderer.render(fbScene, fbCamera);
+
+        flip = !flip;
+
+        // composer.render();
         requestAnimationFrame(loop);
         frameCount++;
       };
