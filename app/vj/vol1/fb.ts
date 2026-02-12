@@ -1,18 +1,18 @@
 export const fbShader = {
-uniforms : {
-tCurrent : { value : null },
-tPrev : { value : null },
-uTime : { value : null },
-uCC : { value : new Array( 6 ) . fill(0)},
-},
-vertexShader : `
+  uniforms: {
+    tCurrent: { value: null },
+    tPrev: { value: null },
+    uTime: { value: null },
+    uCC: { value: new Array(6).fill(0) },
+  },
+  vertexShader: `
 varying vec2 vUv;
 void main() {
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
 `,
-fragmentShader : `
+  fragmentShader: `
 varying vec2 vUv;
 uniform sampler2D tCurrent;
 uniform sampler2D tPrev;
@@ -42,6 +42,9 @@ vec3 hsl2rgb(vec3 hsl) {
 float lumi(vec3 color) {
   return dot(color, vec3(0.3, 0.59, 0.11));
 }
+vec2 rotatePos(vec2 p, float a) {
+  return p * mat2(cos(a), -sin(a), sin(a), cos(a));
+}
 
 void main() {
   vec2 uv = vUv;
@@ -61,4 +64,4 @@ void main() {
   gl_FragColor = vec4(color, 1.0);
 }
 `,
-} ;
+};

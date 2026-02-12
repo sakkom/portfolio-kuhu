@@ -37,6 +37,7 @@ import { layerVol1 } from "./layer/layer";
 import { NegaShader } from "./postProcessing/negaPos";
 import { ColorShader } from "./postProcessing/colorShader";
 import { fbShader } from "./fb";
+import { MirrorShader } from "./postProcessing/mirror";
 
 interface Sketch {
   mesh: THREE.Object3D;
@@ -248,37 +249,38 @@ export default function Page() {
     const buffer = new Float32Array(audioContext.analyser.frequencyBinCount);
 
     /*audio distorstion */
-    const textureBuffer = new Float32Array(2048 * 2);
+    const textureBuffer = new Float32Array(2048);
     const dataTexture = new THREE.DataTexture(
       textureBuffer,
-      2048 * 2,
+      2048,
       1,
       THREE.RedFormat,
       THREE.FloatType,
     );
-    dataTexture.needsUpdate = true;
+    // dataTexture.needsUpdate = true;
+    audioDistortionPass.uniforms.uAudioTexture.value = dataTexture;
 
     const handleClick = async () => {
       // const audio = new Audio(
       //   "/audio/sample-pack-link-in-bio-dopetronic-aliens-in-my-basement-331356.mp3",
       // );
-      const audio = new Audio(
-        "/audio/fassounds-good-night-lofi-cozy-chill-music-160166.mp3",
-      );
-      // const devices = await navigator.mediaDevices.enumerateDevices();
-      // const audioinputs = devices.filter((d) => d.kind == "audioinput");
-      // // console.log(audioinputs);
-      // const ipod = audioinputs.find((d) => d.label.includes("USB Audio"));
-      // const stream = await navigator.mediaDevices.getUserMedia({
-      //   audio: {
-      //     deviceId: { exact: ipod.deviceId },
-      //     echoCancellation: false,
-      //     noiseSuppression: false,
-      //     autoGainControl: true,
-      //   },
-      // });
+      // const audio = new Audio(
+      //   "/audio/fassounds-good-night-lofi-cozy-chill-music-160166.mp3",
+      // );
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const audioinputs = devices.filter((d) => d.kind == "audioinput");
+      console.log(audioinputs);
+      const ipod = audioinputs.find((d) => d.label.includes("USB Audio"));
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: { exact: ipod.deviceId },
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: true,
+        },
+      });
 
-      AudioAnalyser.play(audioContext.ctx, audioContext.analyser, audio);
+      AudioAnalyser.play(audioContext.ctx, audioContext.analyser, stream);
 
       let bpmCounter = 0;
       let frameCount = 0;
@@ -364,8 +366,10 @@ export default function Page() {
 
         if (context.bpmCount % 2 === 0) {
           AudioAnalyser.getData(audioContext.analyser, textureBuffer);
+          for (let i = 0; i < textureBuffer.length; i++) {
+            textureBuffer[i] = textureBuffer[i] * ampBufferNum.current;
+          }
           dataTexture.needsUpdate = true;
-          audioDistortionPass.uniforms.uAudioTexture.value = dataTexture;
         }
         /* */
 

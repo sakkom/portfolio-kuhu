@@ -78,7 +78,7 @@ export const Title = ({
             key={i}
             style={{
               ...shuffleFonts[fontIndex],
-              fontSize: 25,
+              fontSize: 30,
               color: `hsl(0, 0%, ${(1.0 - color) * 100}%)`,
               // color: `hsl(${charRand[i] * 360}, 100%, 50%)`,
             }}
@@ -94,7 +94,7 @@ export const Title = ({
             key={`unix-${i}`}
             style={{
               ...shuffleFonts[fontIndex],
-              fontSize: 25,
+              fontSize: 30,
               // color: color ? "black" : "white",
               color: `hsl(0, 0%, ${(1.0 - color) * 100}%)`,
               // color: `hsl(${charRand[i] * 360}, 100%, 50%)`,

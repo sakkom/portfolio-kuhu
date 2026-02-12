@@ -14,7 +14,7 @@ export namespace vol1S3 {
           points.push(point);
         }
         const curve = new THREE.CatmullRomCurve3(points);
-        const geometry = new THREE.TubeGeometry(curve, 1000, 0.01, 100);
+        const geometry = new THREE.TubeGeometry(curve, 100, 0.01, 16);
         const material = new THREE.MeshStandardMaterial({
           color: 0xffffff,
           metalness: 1.0,
@@ -67,8 +67,11 @@ export namespace vol1S3 {
           }
           const curve = new THREE.CatmullRomCurve3(points);
           // mesh.geometry.dispose();
+          if (mesh.geometry) {
+            mesh.geometry.dispose();
+          }
 
-          mesh.geometry = new THREE.TubeGeometry(curve, 1000, 0.005, 100);
+          mesh.geometry = new THREE.TubeGeometry(curve, 100, 0.005, 16);
 
           // mesh.scale.set(scale, scale, scale);
         });

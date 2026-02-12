@@ -98,16 +98,20 @@ export default function Page() {
 
         vec3 finalColor = vec3(0.);
         vec2 blockUv = uv;
-        uv = rotatePos(uv-0.5, -uTime * .5 + 1.57);
+        // uv = rotatePos(uv-0.5, -uTime  * .5 + 1.57);
 
-        for(float i = 0.; i < 3.; i++) {
-          uv.x += uTime * .1;
-          uv.y += uTime * 0.5;
-          float size = floor(rand2(floor(uv * i/3. * 10.)) * 10.);
+        float loopNum = fract(uTime * .5) * 3.0 + 1.0;
+        // float loopNum = 5.;
+        for(float i = 0.; i < loopNum; i++) {
+          uv.x += cos(uv.y * 10. + uTime * 0.001 ) * 0.15;
+          uv.y += sin(uv.x * 10. + uTime * 0.001 ) *0.15;
+          // uv.x += uTime * 0.5;
+          // uv.y += uTime * 0.5;
+          float size = floor(rand2(floor(uv * i/loopNum * 10.)) * 10.);
           blockUv = floor(uv * size) / size;
 
           //lightness0.1 ~0.15でかなり変化
-          vec3 col = vec3(step(rand2(blockUv), .5)) * hsl2rgb(vec3(rand2(blockUv + floor(uTime * .05)), 1.0, 0.1001));
+          vec3 col = vec3(step(rand2(blockUv), .5)) * hsl2rgb(vec3(rand2(blockUv + floor(uTime * .1)), 1.0, 0.12));
           // vec3 col = vec3(rand2(blockUv)) * vec3(0.2);
           finalColor += col;
           uv *= 1.8;
@@ -164,15 +168,19 @@ export default function Page() {
 
         void main() {
           vec2 uv = vUv;
-          vec4 texCol = texture2D(tDiffuse, vUv);
+          vec2 fractUv = uv;
+          fractUv = fract(uv* 1.0);
+          vec2 mirrorUv = fractUv;
+           mirrorUv = abs(fractUv*.5 - .25);
+          vec4 texCol = texture2D(tDiffuse, mirrorUv);
 
           float gray = pow(lumi(texCol.rgb),10.);
           float grayFloor = floor(gray *20.);
           float r = rand1(grayFloor);
 
-          if(r > 0.5) {
-            float hue = mod(grayFloor, 5.0) / 5.0;
-            gl_FragColor = vec4(hsl2rgb(vec3(rand1(grayFloor),1.0, 0.6)) * 1., 1.0) ;
+          if(r > .5) {
+            float hue = mod(grayFloor, 3.0) / 3.0;
+            gl_FragColor = vec4(hsl2rgb(vec3(rand1(grayFloor ) + fract(uTime * 0.05) ,1.0, 0.6)) * 1., 1.0) ;
           } else {
           gl_FragColor = vec4(vec3(1.-step(gray, 0.01)), 1.);
             // gl_FragColor = vec4(vec3(gray), 1.);

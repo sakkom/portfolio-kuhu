@@ -445,7 +445,7 @@ export namespace vol1S4 {
 
             // uv = rotatePos(uv, uTime * 0.1);
 
-            float loopNum = 10.0;
+            float loopNum = 20.0;
             for(float i = 0.0; i < loopNum; i++) {
               float r = pow(i / loopNum * 0.25, 0.8);
               vec2 offset = getOffset1(i * 3.14 + uBpmCount) * 0.8;
