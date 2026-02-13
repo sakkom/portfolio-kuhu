@@ -2,11 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import {
-  EffectComposer,
-  RenderPass,
-  ShaderPass,
-} from "three/examples/jsm/Addons.js";
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,15 +13,18 @@ export default function Page() {
     // const aspect = window.innerWidth / window.innerHeight;
     const aspect = 2480 / 3508;
 
-    // const WIDTH = 1500;
-    // const HEIGHT = 2102;
-    const WIDTH = window.innerWidth;
-    const HEIGHT = window.innerHeight;
+    const WIDTH = 2480;
+    const HEIGHT = 3508;
+    // const WIDTH = window.innerWidth;
+    // const HEIGHT = window.innerHeight;
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
+      preserveDrawingBuffer: true,
+      alpha: true,
     });
+    renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(WIDTH, HEIGHT, true);
 
@@ -38,16 +36,20 @@ export default function Page() {
     const feedbackScene = new THREE.Scene();
     const feedbackCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    const sketchTarget = new THREE.WebGLRenderTarget(WIDTH, HEIGHT);
-    const targetA = new THREE.WebGLRenderTarget(WIDTH, HEIGHT);
-    const targetB = new THREE.WebGLRenderTarget(WIDTH, HEIGHT);
+    const dpr = renderer.getPixelRatio();
+    const rtWidth = Math.floor(WIDTH * dpr);
+    const rtHeight = Math.floor(HEIGHT * dpr);
+
+    const sketchTarget = new THREE.WebGLRenderTarget(rtWidth, rtHeight);
+    const targetA = new THREE.WebGLRenderTarget(rtWidth, rtHeight);
+    const targetB = new THREE.WebGLRenderTarget(rtWidth, rtHeight);
 
     /*sketch */
     const sketchGeometry = new THREE.PlaneGeometry(2, 2);
     const sketchMaterial = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: null },
-        uAspect: { value: window.innerWidth / window.innerHeight },
+        uAspect: { value: aspect },
       },
       vertexShader: `
         varying vec2 vUv;
@@ -105,7 +107,7 @@ export default function Page() {
         uv.x *= uAspect;
 
         float finalDist = 0.;
-        vec3 finalColor = vec3(0.);
+        vec3 finalColor = vec3(0);
         bool filled = false;
 
         // uv += getOffset2(uv) * 0.01;
@@ -124,24 +126,27 @@ export default function Page() {
             sin(atan(rotateUv.y, uv.x) * 5. + uTime * 1.) * 0.1,
             sin(atan(uv.y, rotateUv.x) * 5. + uTime * 1.) * 0.1
           );
-          float dist = length(rotateUv - sinOffset - offset) - exp(-30.0  * (i+1.)/loopNum) * .5;
+          float visual = -30.0;
+          float dist = length(rotateUv - sinOffset - offset) - exp(visual * (i+1.)/loopNum) * .5;
           // float dist = length(uv - sinOffset) - rand1(i+ 1.234) * 0.25;
           float line = step(abs(dist), 0.001);
           // finalDist = opSmoothUnion(finalDist, dist, 0.001);
           if(!filled && line > 0.001) {
-            if(rand1(i + floor(uTime * 10.)) > 1.) {
-              finalColor = line * hsl2rgb(vec3(rand1(i) * .5 + uTime*.5 , 1., 0.5));
+            if(rand1(i + floor(uTime * 10.)) > .9) {
+            // finalColor = line * hsl2rgb(vec3(rand1(i) * .1 + uTime*.5 , 1., 0.5));
+              // finalColor = line * vec3(1., 0.,0.);
             } else if(rand1(i) > 0.0) {
-              finalColor = mod(i, 2.0) == 0.0 ? line * vec3(1.) : line * vec3(0.1);
+            // finalColor = mod(i, 2.0) == 0.0 ? line * vec3(1., 1., 0.3) : line * vec3(.0, .8,0.3);
+              finalColor = mod(i, 2.0) == 0.0 ? line * vec3(1.) : line * vec3(.01);
             }
             filled = true;
           }
           blockUv *= 1.1;
         }
 
-        // vec3 col = smoothstep(-0.05, 0.05, finalColor);
-
-        gl_FragColor = vec4(vec3(finalColor), 1.0);
+        // vec3 col = smoothstep(-0.05, 0.05, finalColor);)
+        float a = length(finalColor) > 0.001 ? 1.0 : 0.;
+        gl_FragColor = vec4(vec3(finalColor), a);
       }
       `,
     });
@@ -211,7 +216,7 @@ export default function Page() {
           float diff = length(currentColor - prevColor);
           // vec3 color = currentColor + prevColor * clamp(diff, 0.02, .98);
           // vec3 color = currentColor + prevColor * clamp(rand1(floor(1.-diff * 100.)), 0.9, 0.9999);
-          vec3 color = mix(stepPrev * 0.95, currentColor, step(.01, length(currentColor)));
+          vec3 color = mix(prevColor, currentColor, step(.01, length(currentColor)));
           gl_FragColor = vec4(color, 1.0);
         }
       `,
@@ -219,6 +224,57 @@ export default function Page() {
     const feedbackSketch = new THREE.Mesh(feedbackGeometry, feedbackMaterial);
     feedbackScene.add(feedbackSketch);
     /* */
+    const stickerScene = new THREE.Scene();
+    const stickerGeometry = new THREE.PlaneGeometry(2, 2);
+    const stickerMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: null },
+        uTime: { value: null },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+      uniform sampler2D tDiffuse;
+        uniform float uTime;
+        varying vec2 vUv;
+
+        float lumi(vec3 color) {
+          return dot(color, vec3(0.3, 0.59, 0.11));
+        }
+        float rand1(float y) {
+          return fract(sin(y * 12.9898) * 43758.5453123);
+        }
+        float rand2(vec2 p) {
+          return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+        }
+        vec3 hsl2rgb(vec3 hsl) {
+          float h = hsl.x;
+          float s = hsl.y;
+          float l = hsl.z;
+
+          vec3 rgb = clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+          return l + s * (rgb - 0.5) * (1.0 - abs(2.0 * l - 1.0));
+        }
+
+        void main() {
+          vec2 uv = vUv;
+          vec2 fractUv = fract(uv * 2.);
+
+          vec3 sketch = texture2D(tDiffuse, fractUv).rgb;
+          // vec3 color = length(sketch) > 0.001 ? sketch : vec3(0.8, 1., 0.5);
+          float a = length(sketch) > 0.001 ? 1.0 : 0.;
+          gl_FragColor = vec4(sketch, a);
+
+        }
+      `,
+    });
+    const stikerQuad = new THREE.Mesh(stickerGeometry, stickerMaterial);
+    stickerScene.add(stikerQuad);
 
     const clock = new THREE.Clock();
 
@@ -246,8 +302,11 @@ export default function Page() {
       renderer.setRenderTarget(writeBuffer);
       renderer.render(feedbackScene, feedbackCamera);
 
-      renderer.setRenderTarget(null);
+      renderer.setRenderTarget(writeBuffer);
       renderer.render(feedbackScene, feedbackCamera);
+      renderer.setRenderTarget(null);
+      stickerMaterial.uniforms.tDiffuse.value = writeBuffer.texture;
+      renderer.render(stickerScene, feedbackCamera);
 
       flip = !flip;
 
@@ -268,6 +327,7 @@ export default function Page() {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
+        backgroundColor: "red",
       }}
     >
       <canvas
