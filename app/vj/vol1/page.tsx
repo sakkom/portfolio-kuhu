@@ -279,8 +279,9 @@ export default function Page() {
           autoGainControl: true,
         },
       });
+      const audio = new Audio("/mix/20260130_232541_E01.wav");
 
-      AudioAnalyser.play(audioContext.ctx, audioContext.analyser, stream);
+      AudioAnalyser.play(audioContext.ctx, audioContext.analyser, audio, 1080);
 
       let bpmCounter = 0;
       let frameCount = 0;
