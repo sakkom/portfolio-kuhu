@@ -1,14 +1,15 @@
 import * as THREE from "three";
 
-export function vj2Matsu(scene: THREE.Scene) {
+export function vj2Treflip(scene: THREE.Scene) {
   const group = new THREE.Group();
   let mat: THREE.ShaderMaterial;
   let video: HTMLVideoElement;
 
   const init = () => {
     video = document.createElement("video");
-    video.src = "/photomusic/P2160091.MOV";
-    video.src = "/photomusic/matsu.mov";
+    // video.src = "/photomusic/P2160091.MOV";
+    video.src = "/vj2/treflip2_0217.mov";
+    // video.src = "/photomusic/P2160106.MOV";
     video.loop = true;
     video.muted = true;
     video.playsInline = true;
@@ -36,15 +37,15 @@ export function vj2Matsu(scene: THREE.Scene) {
         }
       `,
       fragmentShader: `
-        uniform sampler2D uTex;
         varying vec2 vUv;
         uniform float uTime;
-        uniform float uIndex;
+        uniform sampler2D uTex;
+
         float lumi(vec3 color) {
           return dot(color, vec3(0.3, 0.59, 0.11));
         }
-        vec2 rotatePos(vec2 p, float a) {
-          return p * mat2(cos(a), -sin(a), sin(a), cos(a));
+        float rand1(float y) {
+          return fract(sin(y * 12.9898) * 43758.5453123);
         }
         float rand2(vec2 p) {
           return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -52,23 +53,32 @@ export function vj2Matsu(scene: THREE.Scene) {
         vec2 getOffset2(vec2 p) {
           return vec2(rand2(p) - 0.5, rand2(p * 12.34) - 0.5);
         }
+        vec2 getOffset1(float index) {
+          return vec2(rand1(index) - 0.5, rand1(index + 12.34) - 0.5);
+        }
         void main() {
-          vec2 blockUv = vUv;
-          blockUv.y = floor(vUv.y * 10.) / 10.;
-          float a = atan(vUv.y, vUv.x);
-          float length = length(vUv -0.5);
-          vec2 offsetUv = vec2(vUv.x + floor(fract(uTime) * 10.) * 0.05 , vUv.y + floor(fract(uTime) * 10.) * 0.01 );
-          vec2 rotateUv = mod(uIndex, 2.0) == 0. ? rotatePos(vUv-.5, 3.14) + 0.5 : vUv ;
-          vec3 tex = texture2D(uTex, vUv + getOffset2(vUv) * 0.01).rgb;
-          float l = lumi(tex);
-          float stepL =  step(l, 0.3) ;
-          vec3 col = pow(vec3(l), vec3(.5)) * 1.-stepL;
-          if(mod(uIndex, 2.) == 0.) {
-            gl_FragColor = vec4(vec3(1.-col), 1.);
+          vec3 tex = texture2D(uTex, vUv).rgb;
+          float l = lumi(1.-tex);
+          float lPress = pow(l, 15.);
+          vec3 rgbColor;
+          float size = floor(rand2(floor(vUv * 100.)) * 10.0);
+          vec2 blockUv = floor(vUv * size) / size;
+          vec2 noiseUv = vUv + getOffset1(l) * 0.0;
+          float floorL = floor((1.-l) * 20.);
+          rgbColor.r = texture2D(uTex, noiseUv - getOffset1(floorL) * 1.0).g;
+          rgbColor.g = texture2D(uTex, noiseUv + getOffset1(floorL + 1.234) * 1.0).g;
+          rgbColor.b = texture2D(uTex, noiseUv + getOffset1(floorL + 5.678) * 1.0).g;
+          float rLumi = lumi(rgbColor);
+          if(rLumi > .35) {
+            rgbColor = 1.0- rgbColor;
           } else {
-            gl_FragColor = vec4(vec3(col), 1.);
+            rgbColor = pow(rgbColor, vec3(100.0));
           }
-          gl_FragColor = vec4(vec3(col), 1.);
+          // vec3 finalColor = mix(vec3(lPress), pow(rgbColor, vec3(2.)), 0.5);
+          rgbColor = mix(vec3(1.), rgbColor, 0.8);
+          vec3 finalColor = vec3(lPress) + pow(rgbColor, vec3(10.0)) * 10.0;
+
+          gl_FragColor = vec4(vec3(finalColor), 1.);
         }
       `,
     });

@@ -18,7 +18,7 @@ export function vj2Smoothwave(scene: THREE.Scene) {
       const geometry = new MeshLineGeometry();
       geometry.setPoints(positions);
       const mat = new MeshLineMaterial({
-        color: 0xffffff,
+        color: 0x000000,
         lineWidth: 0.01,
         // dashArray: 0.5,
         // dashRatio: 0.5,
@@ -38,7 +38,7 @@ export function vj2Smoothwave(scene: THREE.Scene) {
     const buffer = props.oscillatorBuffer;
 
     for (let i = 0; i < buffer.length; i++) {
-      smoothBuffer[i] = smoothBuffer[i] * 0.9 + buffer[i] * 0.1;
+      smoothBuffer[i] = smoothBuffer[i] * 0.8 + buffer[i] * 0.2;
       // smoothBuffer[i] += (buffer[i] - smoothBuffer[i]) * 0.1;
     }
 
@@ -61,8 +61,8 @@ export function vj2Smoothwave(scene: THREE.Scene) {
         const yOffset = ((k + 1) / (linenum + 1)) * 1.5 - 0.75;
         positions[i * 3 + 1] =
           ((k + 1) / (linenum + 1)) * 2 - 1 > 0.0
-            ? smoothBuffer[i] * Math.exp(-de2 * 3 * de) * 2 + yOffset
-            : -smoothBuffer[i] * Math.exp(-de2 * 3 * de) * 2 + yOffset;
+            ? smoothBuffer[i] * Math.exp(-de2 * 2 * de) * 3 + yOffset
+            : -smoothBuffer[i] * Math.exp(-de2 * 2 * de) * 3 + yOffset;
         positions[i * 3 + 2] = 0;
       }
       (line.geometry as MeshLineGeometry).setPoints(positions);

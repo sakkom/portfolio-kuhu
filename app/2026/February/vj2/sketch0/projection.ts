@@ -37,7 +37,7 @@ export function vj2Radial(scene: THREE.Scene) {
     const buffer = props.oscillatorBuffer;
 
     for (let i = 0; i < buffer.length; i++) {
-      smoothBuffer[i] = smoothBuffer[i] * 0.98 + buffer[i] * 0.02;
+      smoothBuffer[i] = smoothBuffer[i] * 0.9 + buffer[i] * 0.1;
       // smoothBuffer[i] += (buffer[i] - smoothBuffer[i]) * 0.1;
     }
     if (props.onBeat) {
@@ -48,11 +48,14 @@ export function vj2Radial(scene: THREE.Scene) {
 
     for (let i = 0; i < loopNum; i++) {
       const normalI = (i / (loopNum - 1)) * 6.28;
-      const x = Math.cos(normalI) * smoothBuffer[i] * 10;
-      const y = Math.sin(normalI) * smoothBuffer[i] * 10;
+      const x = Math.cos(normalI) * smoothBuffer[i] * 15;
+      const y = Math.sin(normalI) * smoothBuffer[i] * 15;
       // const x = normalI * 1.0 - 0.5;
       // const y = i % 2 ? smoothBuffer[i] * 0.5 * 10 : smoothBuffer[i] * 0.5 * 10;
-      (lines[i].geometry as MeshLineGeometry).setPoints([x, y, 0, 0, 0, 0]);
+      (lines[i].geometry as MeshLineGeometry).setPoints(
+        [x, y, 0, 0, 0, 0],
+        (p) => 1 - p,
+      );
     }
     group.rotateZ(-0.01);
   };
