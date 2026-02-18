@@ -17,7 +17,7 @@ export default function Page() {
     if (!canvas) return;
 
     const video = document.createElement("video");
-    video.src = "/vj2/run1_0217.mov";
+    video.src = "/vj2/run3_0217.mov";
     // video.src = "/vj2/kickflip1_0217.MOV";
     // video.src = "/vj2/treflip4_0217.mov";
     video.loop = true;
@@ -84,25 +84,7 @@ export default function Page() {
           void main() {
             vec3 tex = texture2D(tVideo, vUv).rgb;
             float l = lumi(1.-tex);
-            float lPress = pow(l, 15.);
-            vec3 rgbColor;
-            float size = floor(rand2(floor(vUv * 100.)) * 10.0);
-            vec2 blockUv = floor(vUv * size) / size;
-            vec2 noiseUv = vUv + getOffset1(l) * 0.05;
-            float floorL = floor((1.-l) * 15.);
-            rgbColor.r = texture2D(tVideo, noiseUv - getOffset1(floorL) * 1.0).g;
-            rgbColor.g = texture2D(tVideo, noiseUv + getOffset1(floorL + 1.234) * 1.0).g;
-            rgbColor.b = texture2D(tVideo, noiseUv + getOffset1(floorL + 5.678) * 1.0).g;
-            float rLumi = lumi(rgbColor);
-            if(rLumi > .3) {
-              rgbColor = 1.0- rgbColor;
-            } else {
-              rgbColor = pow(rgbColor, vec3(100.0));
-            }
-            // vec3 finalColor = mix(vec3(lPress), pow(rgbColor, vec3(2.)), 0.5);
-            vec3 finalColor = vec3(lPress) + pow(rgbColor, vec3(5.0)) * 10.0;
-
-            gl_FragColor = vec4(vec3(finalColor), 1.);
+            gl_FragColor = vec4(vec3(pow(tex, vec3(10. * pow(l, .5)))) * pow(1.-l, .2) * 2., 1.);
           }
         `,
       });
@@ -136,8 +118,9 @@ export default function Page() {
             vec3 current = texture2D(tCurrent, vUv).rgb;
             vec3 prev = texture2D(tPrev, vUv).rgb;
             // gl_FragColor = vec4(current + prev * 0.9, 1.);
-            vec3 color = mix(.5-prev * 0.96, current, length(current));
-            gl_FragColor = vec4(color, 1.);
+            gl_FragColor = vec4(mix(current,prev ,0.9), 1.);
+            // vec3 color = mix(.5-prev * 0.99, current, length(current));
+            // gl_FragColor = vec4(color, 1.);
             gl_FragColor = vec4(current, 1.);
           }
         `,
@@ -181,12 +164,13 @@ export default function Page() {
             vec3 finalColor = vec3(0.);
             vec2 texUv = vUv;
 
-            for(float i = 0.; i < 1.; i++) {
+            for(float i = 0.; i < 5.; i++) {
               vec3 color = texture2D(tDiffuse, texUv).rgb;
               float l = lumi(color);
+              float stepL = step(l, 0.1);
               finalColor += color;
-              // texUv.x += (rand1(l) - 0.5) * 0.05;
-              // texUv.y += sin(l * 10.) * 0.01 + cos(l * 10.) * 0.01;
+              // texUv.x += (rand1(1.-l) - 0.5) * 0.05;
+              texUv.x += sin(stepL * 20.) * 0.05 + cos(stepL * 20.) * 0.05;
             }
             gl_FragColor = vec4(finalColor / 1., 1.);
           }

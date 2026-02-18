@@ -23,6 +23,7 @@ import { NegaShader } from "@/app/vj/vol1/postProcessing/negaPos";
 import { v1Glitch0 } from "@/app/vj/vol1/postProcessing/glitchVj1";
 import { ColorShader } from "@/app/vj/vol1/postProcessing/colorShader";
 import { vj2Treflip } from "./treflip";
+import { vj2Walk } from "./walk";
 
 interface Scene {
   sketch: {
@@ -155,6 +156,7 @@ export default function Page() {
       { sketch: vj2PhotoMusic(scene), pad: 44, active: false },
       { sketch: vj2Radial(scene), pad: 45, active: false },
       { sketch: vj2Treflip(scene), pad: 46, active: false },
+      { sketch: vj2Walk(scene), pad: 47, active: false },
     ];
     scenes.forEach((s) => {
       s.sketch.init();
