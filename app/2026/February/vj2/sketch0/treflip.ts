@@ -78,6 +78,7 @@ export function vj2Treflip(scene: THREE.Scene) {
           rgbColor = mix(vec3(1.), rgbColor, 0.8);
           vec3 finalColor = vec3(lPress) + pow(rgbColor, vec3(10.0)) * 10.0;
 
+          // float finalColorLumi = pow(lumi(finalColor),2.);
           gl_FragColor = vec4(vec3(finalColor), 1.);
         }
       `,

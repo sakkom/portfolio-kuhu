@@ -50,7 +50,7 @@ export function vj2PhotoMusic(scene: THREE.Scene) {
           vec3 tex = texture2D(uTex, rotateUv).rgb;
           float l = lumi(tex);
           float stepL =  step(l, 0.7) ;
-          float col = pow(l, .8);
+          float col = pow(l, 2.);
           if(mod(uIndex, 2.) == 0.) {
             gl_FragColor = vec4(vec3(1.-col), 1.);
           } else {
@@ -69,7 +69,7 @@ export function vj2PhotoMusic(scene: THREE.Scene) {
 
   const update = (props: any) => {
     const beatFloat = (props.bpm / 60) * props.time;
-    const index = Math.floor(beatFloat * 4) % 15;
+    const index = Math.floor(beatFloat * 2) % 15;
     // const index = Math.floor(props.bpmCount * 30) % 15;
     mat.uniforms.uTex.value = textures[index];
     mat.uniforms.uTime.value = props.time;

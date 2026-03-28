@@ -39,7 +39,7 @@ export default function Page() {
         );
         points.push(p);
       }
-      const curve = new THREE.CatmullRomCurve3(points, false);
+      const curve = new THREE.CatmullRomCurve3(points);
       const geometry = new THREE.TubeGeometry(curve, 10000, 0.01 * j, 8);
       const material = new THREE.MeshStandardMaterial({
         color: new THREE.Color().setHSL(0, 0.0, 1.0 - (j * j) / 10.0),

@@ -13,8 +13,8 @@ export function vj2CirclePacking(scene: THREE.Scene) {
 
   const init = () => {
     for (let i = 0; i < 10000; i++) {
-      const x = (Math.random() * 1 - 1) * aspect;
-      const y = Math.random() * 2 - 1;
+      const x = Math.random() * 1.5 - 0.75;
+      const y = Math.random() * 1.5 - 0.75;
 
       let maxRadius = Math.random() * 1;
       for (const c of circles) {
@@ -89,10 +89,10 @@ export function vj2CirclePacking(scene: THREE.Scene) {
       circles.length = 0;
 
       for (let i = 0; i < 1000; i++) {
-        // const x = Math.random() * 1.5 - 0.75;
-        // const y = Math.random() * 1.5 - 0.75;
-        const x = (Math.random() * 2 - 1) * aspect;
-        const y = Math.random() * 2 - 1;
+        const x = Math.random() * 1.5 - 0.75;
+        const y = Math.random() * 1.5 - 0.75;
+        // const x = (Math.random() * 2 - 1) * aspect;
+        // const y = Math.random() * 2 - 1;
         let maxR = 0.5;
         for (const c of circles) {
           maxR = Math.min(maxR, Math.hypot(c.x - x, c.y - y) - c.r);
@@ -105,13 +105,14 @@ export function vj2CirclePacking(scene: THREE.Scene) {
         let mesh;
         if (maxCircle) {
           for (let k = 0; k < 10; k++) {
-            const segments = 50;
+            // const segments = 50;
+            const segments = Math.max(Math.floor(Math.random() * 50), 2);
             const positions = new Float32Array((segments + 1) * 3);
-            const d = 0.2;
+            const d = 0.1;
             for (let i = 0; i <= segments; i++) {
               const a = (i / segments) * Math.PI * 2;
-              positions[i * 3] = Math.cos(a) * c.r * Math.exp(-d * k);
-              positions[i * 3 + 1] = Math.sin(a) * c.r * Math.exp(-d * k);
+              positions[i * 3] = Math.cos(a) * c.r;
+              positions[i * 3 + 1] = Math.sin(a) * c.r;
               positions[i * 3 + 2] = 0;
             }
             const geometry = new MeshLineGeometry();
@@ -125,8 +126,8 @@ export function vj2CirclePacking(scene: THREE.Scene) {
             mat.transparent = true;
             const mesh = new THREE.Mesh(geometry, mat);
             mesh.position.set(
-              c.x * Math.exp(-0.05 * k),
-              c.y * Math.exp(-0.05 * k),
+              c.x * Math.exp(-0.01 * k),
+              c.y * Math.exp(-0.01 * k),
               0,
             );
             mesh.scale.set(0, 0, 1);

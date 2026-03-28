@@ -37,7 +37,7 @@ export function vj2Radial(scene: THREE.Scene) {
     const buffer = props.oscillatorBuffer;
 
     for (let i = 0; i < buffer.length; i++) {
-      smoothBuffer[i] = smoothBuffer[i] * 0.9 + buffer[i] * 0.1;
+      smoothBuffer[i] = smoothBuffer[i] * 0.98 + buffer[i] * 0.02;
       // smoothBuffer[i] += (buffer[i] - smoothBuffer[i]) * 0.1;
     }
     if (props.onBeat) {

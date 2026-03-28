@@ -40,7 +40,7 @@ export function vj2CirclePacking2(scene: THREE.Scene) {
       geometry.setPoints(positions);
       const mat = new MeshLineMaterial({
         color: 0x000000,
-        lineWidth: 0.01,
+        lineWidth: 0.03,
         opacity: 0,
         resolution: new THREE.Vector2(WIDTH, HEIGHT),
       });
@@ -87,10 +87,14 @@ export function vj2CirclePacking2(scene: THREE.Scene) {
         let mesh;
         if (maxCircle) {
           const segments = 50;
+          // const segments = Math.max(Math.floor(Math.random() * 50), 2);
           const positions = new Float32Array((segments + 1) * 3);
           const d = 0.2;
           for (let i = 0; i <= segments; i++) {
-            const a = (i / segments) * Math.PI * 2;
+            const randomDraw = Math.random() * 6.28;
+
+            // const a = (i / segments) * Math.PI * 2;
+            const a = randomDraw;
             positions[i * 3] = Math.cos(a) * c.r;
             positions[i * 3 + 1] = Math.sin(a) * c.r;
             positions[i * 3 + 2] = 0;

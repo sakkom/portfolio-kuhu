@@ -1,13 +1,15 @@
 import * as THREE from "three";
 
-export function vj2Sea(scene: THREE.Scene) {
+export function vj2Suzuki(scene: THREE.Scene) {
   const group = new THREE.Group();
   let mat: THREE.ShaderMaterial;
   let video: HTMLVideoElement;
 
   const init = () => {
     video = document.createElement("video");
-    video.src = "/photomusic/P2160091.MOV";
+    // video.src = "/photomusic/P2160091.MOV";
+    // video.src = "/videos/lE6CYn1i6nXTV_x-xN7LZa-RJz2a1C8B_r2vI86L5-c.mov";
+    video.src = "/videos/3578236-hd_1920_1080_25fps.mp4";
     // video.src = "/photomusic/P2160106.MOV";
     video.loop = true;
     video.muted = true;
@@ -36,33 +38,39 @@ export function vj2Sea(scene: THREE.Scene) {
         }
       `,
       fragmentShader: `
-        uniform sampler2D uTex;
         varying vec2 vUv;
         uniform float uTime;
-        uniform float uIndex;
+        uniform sampler2D uTex;
+
         float lumi(vec3 color) {
           return dot(color, vec3(0.3, 0.59, 0.11));
         }
-        vec2 rotatePos(vec2 p, float a) {
-          return p * mat2(cos(a), -sin(a), sin(a), cos(a));
+        float rand1(float y) {
+          return fract(sin(y * 12.9898) * 43758.5453123);
+        }
+        float rand2(vec2 p) {
+          return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+        }
+        vec2 getOffset2(vec2 p) {
+          return vec2(rand2(p) - 0.5, rand2(p * 12.34) - 0.5);
+        }
+        vec2 getOffset1(float index) {
+          return vec2(rand1(index) - 0.5, rand1(index + 12.34) - 0.5);
         }
         void main() {
-          vec2 blockUv = vUv;
-          blockUv.y = floor(vUv.y * 10.) / 10.;
-          float a = atan(vUv.y, vUv.x);
-          float length = length(vUv -0.5);
-          vec2 offsetUv = vec2(vUv.x + floor(fract(uTime) * 10.) * 0.05 , vUv.y + floor(fract(uTime) * 10.) * 0.01 );
-          vec2 rotateUv = mod(uIndex, 2.0) == 0. ? rotatePos(vUv-.5, 3.14) + 0.5 : vUv ;
-          vec3 tex = texture2D(uTex, rotateUv).rgb;
-          float l = lumi(tex);
-          float stepL =  step(l, 0.5) ;
-          vec3 col = pow(tex, vec3(5.));
-          if(mod(uIndex, 2.) == 0.) {
-            gl_FragColor = vec4(col , 1.);
-          } else {
-            gl_FragColor = vec4(vec3(col), 1.);
-          }
-          // gl_FragColor = vec4(vec3(stepL), 1.);
+          vec2 uv = vUv;
+          vec3 color = texture2D(uTex, uv).rgb;
+          vec3 rotColor = vec3(
+            sin(uTime + rand1(uTime)) * 0.5 + 0.5,
+            cos(uTime+ rand1(uTime)) * 0.5 + 0.5,
+            sin(uTime+ rand1(uTime)) * 0.5 + 0.5
+          );
+          color *= rotColor;
+
+          float l = lumi(color) * 1.5;
+
+          vec3 finalColor = pow(color, vec3(1.5-l));
+          gl_FragColor = vec4(finalColor, 1.0);
         }
       `,
     });

@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import style from "./RotateChar.module.css";
 import Link from "next/link";
 
-const FONTS = ["Georgia", "Impact", "Helvetica"];
+// const FONTS = ["Georgia", "Impact", "Helvetica"];
+const FONTS = [
+  '"Hiragino Mincho ProN", serif', // 細い・明朝
+  '"Hiragino Kaku Gothic ProN", sans-serif', // 普通・ゴシック
+  '"Yu Mincho", "游明朝", serif', // 太め・明朝
+];
 
 interface RotateCharProps {
   text: string;
@@ -16,7 +21,7 @@ function fCharRand(text: string): Array<number> {
 }
 
 //start not 0
-const useUnixTime = () => {
+export const useUnixTime = () => {
   const [t, setT] = useState<number>(0);
   useEffect(() => {
     let id: number;
@@ -55,7 +60,7 @@ export const RotateChar = ({ text, wheelRatio }: RotateCharProps) => {
           const delay = charRand[i]; /* + 遅延 */ //[0, 1]
 
           /*after rotate animation props*/
-          const range = 30;
+          const range = 15;
           const afterRotate = charRand[i] * range - range / 2;
 
           /*after chagne font animation*/
@@ -91,7 +96,7 @@ export const RotateChar = ({ text, wheelRatio }: RotateCharProps) => {
                   transform: trans,
                   filter: `blur(${wheelRatio * 5}px)`,
                   fontFamily: FONTS[fontI],
-                  ["--afterRotate" as any]: `${afterRotate}deg`,
+                  // ["--afterRotate" as any]: `${afterRotate}deg`,
                   ["--delay" as any]: `${delay}s`,
                 }}
               >

@@ -63,8 +63,8 @@ export default function Page() {
     if (!canvas) return;
 
     const video = document.createElement("video");
-    // video.src = "/43/DZ2y7Af5XTeECRUkB--jMCOdgCotEeF2njRSQQBOc48.MP4";
-    video.src = "/43/43video11_0218.webm";
+    video.src = "/43/DZ2y7Af5XTeECRUkB--jMCOdgCotEeF2njRSQQBOc48.MP4";
+    // video.src = "/43/43video11_0218.webm";
     video.loop = false;
     video.muted = true;
     video.playsInline = true;
@@ -88,7 +88,8 @@ export default function Page() {
       const videoTexture = new THREE.VideoTexture(video);
       videoTexture.minFilter = THREE.LinearFilter;
       videoTexture.magFilter = THREE.LinearFilter;
-      videoTexture.colorSpace = THREE.SRGBColorSpace;
+      // videoTexture.colorSpace = THREE.SRGBColorSpace;
+      videoTexture.colorSpace = THREE.NoColorSpace;
 
       // ① lumiベース (↑) + walkEffect (←) を1つのShaderMaterialにmix
       const lumiMat = new THREE.ShaderMaterial({
@@ -146,7 +147,7 @@ export default function Page() {
               rgbColor = pow(rgbColor, vec3(100.0));
             }
             rgbColor = mix(vec3(1.0), rgbColor, 1.0);
-            vec3 finalColor = vec3(lPress) + pow(rgbColor, vec3(10.0)) * 10.0;
+            vec3 finalColor = vec3(lPress) + pow(rgbColor, vec3(2.0)) * 10.0;
             float finalColorLumi = lumi(finalColor);
             return mix(tex, vec3(finalColorLumi), uLevel);
           }
@@ -253,18 +254,29 @@ export default function Page() {
         lumiMat.uniforms.uTime.value = time;
         distortionPass.uniforms.uTime.value = time;
 
-        if (counter % 2 == 0) {
-          if (Math.random() > 0.98) {
-            lumiMat.uniforms.uLevel.value = Math.random();
+        if (counter % 1 === 0) {
+          if (Math.random() > 0.99) {
+            // lumiMat.uniforms.uLevel.value = Math.random();
+            lumiMat.uniforms.uLevel.value = 0.5;
+            setTimeout(() => {
+              lumiMat.uniforms.uLevel.value = 0.0;
+            }, 200);
           }
-          if (Math.random() > 0.98) {
-            distortionPass.uniforms.uEnabled.value = Math.random();
+          if (Math.random() > 0.99) {
+            // distortionPass.uniforms.uEnabled.value = Math.random();
+            distortionPass.uniforms.uEnabled.value = 0.5;
+            setTimeout(() => {
+              distortionPass.uniforms.uEnabled.value = 0.0;
+            }, 200);
           }
-          if (Math.random() > 0.98) {
-            lumiMat.uniforms.uLevel2.value = Math.random();
-          }
+          // if (Math.random() > 0.995) {
+          //   // lumiMat.uniforms.uLevel2.value = Math.random();
+          //   lumiMat.uniforms.uLevel2.value = 0.5;
+          //   setTimeout(() => {
+          //     lumiMat.uniforms.uLevel2.value = 0.0;
+          //   }, 200);
+          // }
         }
-
         AudioAnalyser.getData(analyser, textureBuffer);
         dataTexture.needsUpdate = true;
         distortionPass.uniforms.uAudioTexture.value = dataTexture;
@@ -275,15 +287,25 @@ export default function Page() {
 
       window.addEventListener(
         "click",
-        () => {
+        async () => {
           audioCtx.resume();
           video.muted = false;
           const source = audioCtx.createMediaElementSource(video);
           source.connect(analyser);
           analyser.connect(audioCtx.destination);
           source.connect(audioDest);
+          const waitForAudio = () => {
+            AudioAnalyser.getData(analyser, textureBuffer);
+            const hasSignal = textureBuffer.some((v) => v !== 0.0);
+            if (hasSignal) {
+              loop();
+            } else {
+              requestAnimationFrame(waitForAudio);
+            }
+          };
           video.play();
-          loop();
+          waitForAudio();
+          // loop();
 
           chunks = [];
           recorder = new MediaRecorder(recordStream, {
@@ -291,7 +313,7 @@ export default function Page() {
             videoBitsPerSecond: 20_000_000,
             audioBitsPerSecond: 320_000,
           });
-          // recorder.start(500);
+          recorder.start(500);
           recorder.ondataavailable = (ev) => chunks.push(ev.data);
           recorder.onstop = () => {
             const blob = new Blob(chunks, { type: "video/webm" });

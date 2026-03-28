@@ -10,7 +10,7 @@ export function vj2Smoothwave(scene: THREE.Scene) {
   const HEIGHT = window.innerHeight;
   const aspect = WIDTH / HEIGHT;
 
-  const linenum = 40;
+  const linenum = 20;
 
   const init = () => {
     for (let i = 0; i < linenum; i++) {
@@ -18,7 +18,7 @@ export function vj2Smoothwave(scene: THREE.Scene) {
       const geometry = new MeshLineGeometry();
       geometry.setPoints(positions);
       const mat = new MeshLineMaterial({
-        color: 0x000000,
+        color: 0xffffff,
         lineWidth: 0.01,
         // dashArray: 0.5,
         // dashRatio: 0.5,
